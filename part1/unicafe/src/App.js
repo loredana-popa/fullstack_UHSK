@@ -6,13 +6,25 @@ const Button = ({handleClick, text}) => (
   </button>
 )
 
-const StatisticLine = ({text, value }) => (
-  <p> {text} {value}</p>
-)
+const StatisticLine = ({text, value }) => {
+  return (
+ 
+  <table>
+    <tbody>
+      <tr>
+        <td>{text}</td>
+        <td>{value}</td>
+      </tr>
+    </tbody>
+  </table>
+  )
+}
 
-const Display = () => (
+  
+
+const Display = () => 
   <div>No feedback given</div>
-)
+
 
 const App = () => {
   // save clicks of each button to its own state
