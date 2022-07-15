@@ -6,15 +6,13 @@ const Button = ({handleClick, text}) => (
   </button>
 )
 
-const Stats = ({statText, statValue }) => {
-  return (
-    <div>
-      <p> {statText} {statValue}</p>
-    </div>
-  )
-  
-}
+const StatisticLine = ({text, value }) => (
+  <p> {text} {value}</p>
+)
 
+const Display = () => (
+  <div>No feedback given</div>
+)
 
 const App = () => {
   // save clicks of each button to its own state
@@ -51,13 +49,20 @@ const App = () => {
       <Button handleClick={handleNeutralClick} text='neutral' />
       <Button handleClick={handleBadClick} text='bad' />
 
+      <h1>statistics</h1>
 
-      <Stats statText="good" statValue={good}/>
-      <Stats statText="neutral" statValue={neutral}/>
-      <Stats statText="bad" statValue={bad}/>
-      <Stats statText="all" statValue={all}/>
-      <Stats statText="average" statValue={calcAverage()}/>
-      <Stats statText="positive" statValue={calcPositive()}/>
+      {(good === 0) && (neutral === 0) && (bad === 0) ? 
+
+        <Display /> :
+        <div>
+          <StatisticLine text="good" value={good}/>
+          <StatisticLine text="neutral" value={neutral}/>
+          <StatisticLine text="bad" value={bad}/>
+          <StatisticLine text="all" value={all}/>
+          <StatisticLine text="average" value={calcAverage()}/>
+          <StatisticLine text="positive" value={calcPositive()}/>
+        </div>  
+      }
     </div>
   )
 }
