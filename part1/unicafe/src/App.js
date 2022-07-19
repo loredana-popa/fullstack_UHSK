@@ -13,7 +13,7 @@ const StatisticLine = ({text, value }) => {
     <tbody>
       <tr>
         <td>{text}</td>
-        <td>{value}</td>
+        {text == 'positive' ? <td>{value} %</td> : <td>{value}</td>}
       </tr>
     </tbody>
   </table>
@@ -34,28 +34,23 @@ const App = () => {
   const [all, setAll] = useState(0)
 
 
-  function handleGoodClick() {
+  const handleGoodClick = () => {
     setGood(good + 1)
     setAll(all + 1)
   }
 
-  function handleNeutralClick () {
+  const handleNeutralClick = () => {
     setNeutral(neutral + 1)
     setAll(all + 1) 
   }
 
-  function handleBadClick () {
+  const handleBadClick = () => {
     setBad(bad + 1)
     setAll(all + 1)
   }
 
-  function calcAverage () {
-    return (good * 1 + neutral * 0 + bad * (-1)) / all
-  }
-
-  function calcPositive () {
-    return (good * 100) / all
-  }
+  const calcAverage = () => (good * 1 + neutral * 0 + bad * (-1)) / all
+  const calcPositive = () => ((good * 100) / all)
  
 
   return (
