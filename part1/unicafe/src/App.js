@@ -34,23 +34,28 @@ const App = () => {
   const [all, setAll] = useState(0)
 
 
-  const handleGoodClick = () => {
+  function handleGoodClick() {
     setGood(good + 1)
     setAll(all + 1)
   }
 
-  const handleNeutralClick = () => {
+  function handleNeutralClick () {
     setNeutral(neutral + 1)
     setAll(all + 1) 
   }
 
-  const handleBadClick = () => {
+  function handleBadClick () {
     setBad(bad + 1)
     setAll(all + 1)
   }
 
-  const calcAverage = () => (good * 1 + neutral * 0 + bad * (-1)) / all
-  const calcPositive = () => ((good * 100) / all)
+  function calcAverage () {
+    return (good * 1 + neutral * 0 + bad * (-1)) / all
+  }
+
+  function calcPositive () {
+    return (good * 100) / all
+  }
  
 
   return (
