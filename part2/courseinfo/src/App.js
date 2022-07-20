@@ -8,6 +8,16 @@ const Part = ({ parts }) => {
   return (
    parts.map((part, id) => <p key={id}>{part.name} {part.exercises}</p>))
 }
+
+const Total = ({ exercises }) => {
+  let sum = 0;
+  for (let i = 0; i < exercises.length; i++) {
+    sum += exercises[i];
+  }
+  return (
+    <h4>total of {sum} exercises</h4>
+  )
+}
  
 const Course = ({ course }) => {
 
@@ -15,6 +25,7 @@ const Course = ({ course }) => {
     <div>
       <Header courseName={course.name}/>
       <Part parts = {course.parts} />
+      <Total exercises = {course.parts.map((part,id) => part.exercises)} />
     </div>
   )
 }
@@ -40,7 +51,7 @@ const App = () => {
       }
     ]
   }
-
+ 
 
   return <Course course={course} />
 }
