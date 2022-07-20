@@ -1,5 +1,21 @@
 import { useState } from 'react'
 
+const Display = ({ title, anecdote, votes }) => {
+  return (
+    <div>
+      <h1>{title}</h1>
+      <p>{anecdote}</p>
+      <div>has {votes} votes</div>
+    </div>
+  )
+}
+
+const Button = ({ handleClick, text }) => {
+  return (
+    <button onClick={handleClick}>{text}</button>
+  )
+}
+
 const App = () => {
   const anecdotes = [
     'If it hurts, do it more often.',
@@ -13,16 +29,14 @@ const App = () => {
    
   const [selected, setSelected] = useState(0)
  
-  // Anecdotes -> Votes(list of vote)
-  // vote is key-value pair where:
-  //         key is index in anecdote , value is Number
-  // 
+  // generate an initial list for the votes
   const initializeVotes = (anecdotes) => {
     return Array(anecdotes.length).fill(0)  
   }
 
   const [votes, setVotes] = useState(initializeVotes(anecdotes))
 
+  // generate a random number
   function generateNumber() {
     const max = anecdotes.length - 1;
     const min = 0;
@@ -30,28 +44,45 @@ const App = () => {
     return randomNumber
   }
 
+  // update the state of the selected anecdote
   function getNewAnecdote() {
    setSelected(generateNumber())
   }
 
-
-  // update votes when the vote button is clicked (increase votes by one)
-  const updateVotes = (selected, votes) => {
+  // update votes : increment by 1
+  const handleClickVote= (selected, votes) => {
     let copyVotes = [...votes]
     copyVotes[selected] += 1
     setVotes(copyVotes)
   } 
 
-  
-  console.log(selected)
-  console.log(votes)
+  //get the max vote in the votes array
+  const maxVote =  Math.max(...votes)
+
+  //get index in the votes array of the max vote 
+  const indexMaxVote = votes.indexOf(maxVote)
 
   return (
     <div>
-      {anecdotes[selected]}
-      <div> has {votes[selected]} votes</div>
-      <button onClick={() => updateVotes(selected, votes)}>vote</button>
-      <button onClick={() => getNewAnecdote()}>next anecdote</button>
+      <Display
+        title = 'Anecdote of the day'
+        anecdote = {anecdotes[selected]} 
+        votes = {votes[selected]} />
+  
+      <Button 
+        handleClick={() => handleClickVote(selected, votes)}
+        text='vote'/>
+        
+      <Button 
+        handleClick={() => getNewAnecdote()}
+        text='new anecdote'/>
+
+      <Display
+        title = 'Anecdote with most votes'
+        anecdote = {anecdotes[indexMaxVote]} 
+        votes = {maxVote}
+         />
+
     </div>
   )
 }
