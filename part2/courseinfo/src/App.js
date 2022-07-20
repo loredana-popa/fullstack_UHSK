@@ -4,17 +4,17 @@ const Header = ({ courseName }) => {
   )
 }
 
-const Part = ({ partName}) => {
+const Part = ({ parts }) => {
   return (
-    <div>{partName}</div>
-  )
+   parts.map((part, id) => <p key={id}>{part.name} {part.exercises}</p>))
 }
  
-const Course = ({courseName, partName}) => {
+const Course = ({ course }) => {
+
   return (
     <div>
-      <Header courseName={courseName}/>
-      <Part partName={partName}/>
+      <Header courseName={course.name}/>
+      <Part parts = {course.parts} />
     </div>
   )
 }
@@ -41,13 +41,8 @@ const App = () => {
     ]
   }
 
-  const coursePartsName = (course) => {
-    return (course.parts.map((part, id) => <div key={id}>{part.name}</div> ))
-  }
 
-  return <Course 
-            courseName={course.name} 
-            partName={coursePartsName(course)}/>
+  return <Course course={course} />
 }
 
 export default App;
