@@ -3,22 +3,25 @@ import { useState } from 'react'
 
 const Person = ({ person }) =>{
   return (
-    <div>{person.name}</div>
+    <div>{person.name} {person.number}</div>
   )
 }
   
 
 const App = () => {
   const [persons, setPersons] = useState([
-    { name: 'Arto Hellas' }
+    { name: 'Arto Hellas',
+      number: '040-1234567' }
   ]) 
 
   const [newName, setNewName] = useState('')
+  const [newNumber, setNewNumber] =useState('')
 
   const addPerson = (event) =>{
     event.preventDefault()
     const personObject ={
-      name: newName
+      name: newName,
+      number: newNumber
     }
     const isPerson = persons.find(element => {
       if (element.name === newName){
@@ -32,6 +35,7 @@ const App = () => {
           :
       setPersons(persons.concat(personObject))
       setNewName('')
+      setNewNumber('')
   }
     
 
@@ -40,6 +44,12 @@ const App = () => {
     setNewName(event.target.value)
   }
 
+  const handleNumberChange = (event) => {
+    console.log(event.target.value)
+    setNewNumber(event.target.value)
+  }
+  
+  
   return (
     <div>
       <h2>Phonebook</h2>
@@ -50,6 +60,12 @@ const App = () => {
                   onChange ={handlePersonChange}
                 />
         </div>
+        <div>
+        number: <input 
+                value={newNumber} 
+                onChange ={handleNumberChange}
+              />
+      </div>
         <div>
           <button type="submit">add</button>
         </div>
