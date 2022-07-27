@@ -1,6 +1,29 @@
 
 import { useState } from 'react'
 
+const Filter = ({ value, onChange}) => {
+  return (
+    <div>
+      filter shown with: 
+      <input value={value} onChange = {onChange}/>
+    </div>
+  )
+}
+
+const PersonForm =({ onSubmit, value, onChange, text}) => {
+  return (
+    <form onSubmit={onSubmit}>
+        <div>
+          {text}: <input 
+                  value={value} 
+                  onChange ={onChange}
+                  />
+        </div>
+      </form>
+
+  )
+}
+
 const Person = ({ person }) =>{
   return (
     <div>{person.name} {person.number}</div>
@@ -68,28 +91,28 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
-      <div>
-        filter shown with
-       <input value={searchText} onChange = {handleTextChange}/>
-      </div>
+
+      <Filter value={searchText} onChange = {handleTextChange}/>
+
       <h2>add new</h2>
-      <form onSubmit={addPerson}>
-        <div>
-          name: <input 
-                  value={newName} 
-                  onChange ={handlePersonChange}
-                />
-        </div>
-        <div>
-        number: <input 
-                value={newNumber} 
-                onChange ={handleNumberChange}
-              />
+
+      <PersonForm 
+        onSubmit={addPerson}
+        value ={newName}
+        onChange={handlePersonChange}
+        text='name'
+      />
+
+      <PersonForm 
+        value={newNumber}
+        onChange={handleNumberChange}
+        text='number'
+      />
+
+      <div>
+        <button type="submit">add</button>
       </div>
-        <div>
-          <button type="submit">add</button>
-        </div>
-      </form>
+
       <h2>Numbers</h2>
   
       {resultArray.map(person =>
