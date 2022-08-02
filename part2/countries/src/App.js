@@ -10,10 +10,14 @@ const Filter = ({ onChange, value}) => {
   )
 }
 
-const Countrie = ({ countrie }) => {
+const Countrie = ({ countrie, toggleShow}) => {
+
   return(
-    <p>{countrie.name.common}</p>
-  )
+    <div>
+      {countrie.name.common}
+      <button onClick={toggleShow}>show</button>
+    </div> 
+    )
 }
 
 //generate an HTML list element for each value in a given object
@@ -46,6 +50,8 @@ const CountrieDetails = ({ countrie }) => {
 function App() {
   const [countries, setCountries] = useState([])
   const [searchText, setSearchText] = useState ('')
+  const [show, setShow] = useState({})
+  
 
   useEffect(() => {
     axios
@@ -53,6 +59,7 @@ function App() {
       .then(response =>
         setCountries(response.data))
   }, [])
+  
 
   const handleChange= (event) => {
     setSearchText(event.target.value)
@@ -63,9 +70,36 @@ function App() {
       return countrie
     } 
   }
-   let resultArray =[...countries];
-   resultArray = countries.filter(searchCountrie)
+
+  let resultArray =[...countries];
+  resultArray = countries.filter(searchCountrie)
+  // console.log('all countries', resultArray)
    
+  // const initialization = () => {
+  //   const initShow = {}
+  //   const countriesNameArr = resultArray.map(item => item.name.common )
+  //   // console.log('list of countries names', countriesNameArr)
+  //   countriesNameArr.forEach(item => initShow[item] = false)
+  //  //  console.log('list of show', initShow)
+  //   setShow(initShow)
+  // }
+
+//   const initShow = {}
+//   const countriesNameArr = resultArray.map(item => item.name.common )
+//   // console.log('list of countries names', countriesNameArr)
+//   countriesNameArr.forEach(item => initShow[item] = false)
+//   console.log('list of show', initShow)
+ 
+// setShow(initShow)
+// // console.log('this is show arr', initShow)
+
+const toggleShow = (countrie) => {
+  let name = countrie.name.common
+  let copyArr ={}
+  copyArr[name] = true
+  setShow({...copyArr})
+  // console.log('button clicked')
+}
 
   return (
     <div >
@@ -77,8 +111,18 @@ function App() {
      : (resultArray.length > 10) 
         ? "Too many matches, specify another filter"
       : resultArray.map(countrie => 
-            <Countrie key={countrie.name.common}
-                       countrie={countrie}/>)}
+        show[countrie.name.common]
+        ? <CountrieDetails 
+            key={countrie.name.common} 
+            countrie={countrie}
+          /> 
+        : <Countrie 
+            key={countrie.name.common}
+            countrie={countrie}
+            toggleShow={() => toggleShow(countrie)}
+          />
+
+      )}
     </div>
   )
 }
