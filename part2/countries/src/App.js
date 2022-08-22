@@ -30,7 +30,7 @@ const ListItem = ({ obj }) => {
 
 const WeatherDetails = ({ countrie }) => {
   const [weatherData, setWeatherData] = useState({})
-  const keyAPI = 'e9ea717d0f32058ecbf57d6e8f3a9987';
+  const keyAPI = process.env.REACT_APP_API_KEY
   const lat = countrie.latlng[0];
   const lng = countrie.latlng[1];
   const apiUrl =  `http://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lng}&appid=${keyAPI}&units=metric`
@@ -45,7 +45,7 @@ const WeatherDetails = ({ countrie }) => {
           )
   }, [])
 
-  console.log ('weatherData is', weatherData)
+  // console.log ('weatherData is', weatherData)
 
   let cityWeather = {
     temp: 0,
@@ -63,12 +63,10 @@ const WeatherDetails = ({ countrie }) => {
     }
   }
   updateCityWeather()
-  console.log('cityWeather is', cityWeather) 
+  // console.log('cityWeather is', cityWeather) 
 
   const icon  = cityWeather.conditions.icon
   const iconURL = `http://openweathermap.org/img/wn/${icon}@2x.png`
-  console.log('icon is', icon)
-  console.log('icon url is', iconURL)
 
   return (
     <div>
