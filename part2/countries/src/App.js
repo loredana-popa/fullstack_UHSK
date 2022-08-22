@@ -1,5 +1,5 @@
 import {useState, useEffect} from 'react'
-import axios from 'axios'
+import axios from 'axios';
 
 const Filter = ({ onChange, value}) => {
   return (
@@ -11,7 +11,6 @@ const Filter = ({ onChange, value}) => {
 }
 
 const Countrie = ({ countrie, toggleShow}) => {
-
   return(
     <div>
       {countrie.name.common}
@@ -29,6 +28,59 @@ const ListItem = ({ obj }) => {
   )
 }
 
+const WeatherDetails = ({ countrie }) => {
+  const [weatherData, setWeatherData] = useState({})
+  const keyAPI = 'e9ea717d0f32058ecbf57d6e8f3a9987';
+  const lat = countrie.latlng[0];
+  const lng = countrie.latlng[1];
+  const apiUrl =  `http://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lng}&appid=${keyAPI}&units=metric`
+  
+ 
+  useEffect(() => {
+    console.log('weather conditions')
+    axios
+      .get(apiUrl)
+      .then(response =>
+          setWeatherData(response.data.list[0])
+          )
+  }, [])
+
+  console.log ('weatherData is', weatherData)
+
+  let cityWeather = {
+    temp: 0,
+    windSpeed: 0,
+    conditions: { id : 0, main: '', description : '', icon : ''}
+  }
+
+
+  function updateCityWeather() {
+    if (Object.keys(weatherData).length !== 0) {
+      cityWeather.temp = weatherData.main.temp
+      cityWeather.windSpeed = weatherData.wind.speed 
+      cityWeather.conditions = weatherData.weather[0]
+
+    }
+  }
+  updateCityWeather()
+  console.log('cityWeather is', cityWeather) 
+
+  const icon  = cityWeather.conditions.icon
+  const iconURL = `http://openweathermap.org/img/wn/${icon}@2x.png`
+  console.log('icon is', icon)
+  console.log('icon url is', iconURL)
+
+  return (
+    <div>
+      <h1>Weather in {countrie.capital}</h1>
+      <div>temperature {cityWeather.temp} Celcius</div>
+      <img src={iconURL} alt='weather icon'/>
+      <div>wind {cityWeather.windSpeed} m/s</div>
+    </div>
+  )
+
+}
+
 const CountrieDetails = ({ countrie }) => {
   
   return (
@@ -42,6 +94,9 @@ const CountrieDetails = ({ countrie }) => {
       </ul>
       
       <img src={countrie.flags.png} alt="flag img"></img>
+
+      <WeatherDetails countrie ={countrie}/>
+
     </div>
   )
 }
@@ -51,6 +106,7 @@ function App() {
   const [countries, setCountries] = useState([])
   const [searchText, setSearchText] = useState ('')
   const [show, setShow] = useState({})
+ 
   
 
   useEffect(() => {
@@ -59,7 +115,6 @@ function App() {
       .then(response =>
         setCountries(response.data))
   }, [])
-  
 
   const handleChange= (event) => {
     setSearchText(event.target.value)
@@ -73,32 +128,12 @@ function App() {
 
   let resultArray =[...countries];
   resultArray = countries.filter(searchCountrie)
-  // console.log('all countries', resultArray)
-   
-  // const initialization = () => {
-  //   const initShow = {}
-  //   const countriesNameArr = resultArray.map(item => item.name.common )
-  //   // console.log('list of countries names', countriesNameArr)
-  //   countriesNameArr.forEach(item => initShow[item] = false)
-  //  //  console.log('list of show', initShow)
-  //   setShow(initShow)
-  // }
-
-//   const initShow = {}
-//   const countriesNameArr = resultArray.map(item => item.name.common )
-//   // console.log('list of countries names', countriesNameArr)
-//   countriesNameArr.forEach(item => initShow[item] = false)
-//   console.log('list of show', initShow)
- 
-// setShow(initShow)
-// // console.log('this is show arr', initShow)
 
 const toggleShow = (countrie) => {
   let name = countrie.name.common
   let copyArr ={}
   copyArr[name] = true
   setShow({...copyArr})
-  // console.log('button clicked')
 }
 
   return (
