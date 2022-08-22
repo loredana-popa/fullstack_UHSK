@@ -29,6 +29,7 @@ const ListItem = ({ obj }) => {
 }
 
 const WeatherDetails = ({ countrie }) => {
+  
   const [weatherData, setWeatherData] = useState({})
   const keyAPI = process.env.REACT_APP_API_KEY
   const lat = countrie.latlng[0];
