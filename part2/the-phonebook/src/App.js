@@ -1,6 +1,7 @@
 
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import personService from './services/persons';
 
 
 const Filter = ({ value, onChange}) => {
@@ -40,16 +41,14 @@ const App = () => {
   const [searchText, setSearchText] =useState('')
 
   useEffect(() => {
-    console.log('effect')
-    axios
-      .get('http://localhost:3001/persons')
+    personService
+      .getAll()
       .then(response => {
-        console.log('promis fulfilled')
         setPersons(response.data)
       })
   }, [])
-  console.log('render', persons.length, 'persons')
 
+  console.log('render', persons.length, 'persons')
 
   const addPerson = (event) => {
     event.preventDefault()
@@ -59,14 +58,13 @@ const App = () => {
       number: newNumber
     }
 
-    axios
-      .post('http://localhost:3001/persons', personObject)
-      .then(response => {
-        setPersons(persons.concat(response.data))
-        setNewName('')
-        setNewNumber('')
-        
-      })
+    personService
+    .create(personObject)
+    .then(response => {
+      setPersons(persons.concat(response.data))
+      setNewName('')
+      setNewNumber('')
+    })
 
     const isPerson = persons.find(element => {
       if (element.name === newName){
@@ -96,7 +94,6 @@ const App = () => {
     setSearchText(event.target.value)
   }
   
-
   function searchPerson(person) {
    if (person.name.toLowerCase().match(searchText.toLowerCase()) !==null) {
      return person
