@@ -27,9 +27,13 @@ const PersonForm =({ onSubmit, value, onChange, text}) => {
   )
 }
 
-const Person = ({ person }) =>{
+const Person = ({ person , removePerson}) =>{
   return (
-    <div>{person.name} {person.number}</div>
+    <div>
+      {person.name} {person.number}
+      <button onClick={removePerson}>delete</button>
+    </div>
+
   )
 }
   
@@ -43,8 +47,8 @@ const App = () => {
   useEffect(() => {
     personService
       .getAll()
-      .then(response => {
-        setPersons(response.data)
+      .then(initialPersons => {
+        setPersons(initialPersons)
       })
   }, [])
 
@@ -60,8 +64,8 @@ const App = () => {
 
     personService
     .create(personObject)
-    .then(response => {
-      setPersons(persons.concat(response.data))
+    .then(returnedObject => {
+      setPersons(persons.concat(returnedObject))
       setNewName('')
       setNewNumber('')
     })
@@ -72,6 +76,7 @@ const App = () => {
       }
       return false;
     });
+
    
     isPerson ? 
       alert(newName +' is already added to phonebook')
@@ -80,7 +85,16 @@ const App = () => {
       setNewName('')
       setNewNumber('')
   }
-    
+
+  const removePerson = (id, person) => {
+    if (window.confirm(`Delete ${person.name} from your list?`)) {
+      personService
+      .remove(id, person)
+      .then(
+        setPersons(persons.filter(p => p.id !== id))
+      )
+    }
+  }
 
   const handlePersonChange = (event) => {
     setNewName(event.target.value)
@@ -101,6 +115,7 @@ const App = () => {
  }
   let resultArray =[...persons];
   resultArray = persons.filter(searchPerson)
+  
   
 
   return (
@@ -133,7 +148,8 @@ const App = () => {
       {resultArray.map(person =>
         <Person 
           key={person.name}
-          person={person} />
+          person={person} 
+          removePerson={()=> removePerson(person.id, person)}/>
       )}
     
     
