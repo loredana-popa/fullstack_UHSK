@@ -1,6 +1,5 @@
 
 import { useState, useEffect } from 'react';
-import axios from 'axios';
 import personService from './services/persons';
 
 
@@ -52,11 +51,9 @@ const App = () => {
       })
   }, [])
 
-  console.log('render', persons.length, 'persons')
+  // console.log('render', persons.length, 'persons')
 
-  const addPerson = (event) => {
-    event.preventDefault()
-
+  const createPerson = () => {
     const personObject = {
       name: newName,
       number: newNumber
@@ -64,12 +61,30 @@ const App = () => {
 
     personService
     .create(personObject)
-    .then(returnedObject => {
-      setPersons(persons.concat(returnedObject))
+    .then(returnedPerson => {
+      setPersons(persons.concat(returnedPerson))
       setNewName('')
       setNewNumber('')
     })
+  }
 
+  const updatePerson = () => {
+    const person = persons.find(p => p.name === newName)
+    const changedPerson = {...person, number : newNumber}
+    const id = person.id
+    
+    if (window.confirm(`${person.name} is already added to phonebook, replace the old number with a new one?`)) {
+    personService
+      .update(id, changedPerson)
+      .then(returnedPerson => {
+        setPersons(persons.map(person => person.id !== id ? person : returnedPerson))
+        setNewName('')
+        setNewNumber('')
+      })
+    }
+  }
+
+  const addPerson = () => {
     const isPerson = persons.find(element => {
       if (element.name === newName){
         return true;
@@ -77,17 +92,14 @@ const App = () => {
       return false;
     });
 
-   
-    isPerson ? 
-      alert(newName +' is already added to phonebook')
-          :
-      setPersons(persons.concat(personObject))
-      setNewName('')
-      setNewNumber('')
+    isPerson 
+    ? updatePerson()
+    : createPerson()
   }
 
   const removePerson = (id, person) => {
     if (window.confirm(`Delete ${person.name} from your list?`)) {
+
       personService
       .remove(id, person)
       .then(
@@ -147,9 +159,10 @@ const App = () => {
   
       {resultArray.map(person =>
         <Person 
-          key={person.name}
-          person={person} 
-          removePerson={()=> removePerson(person.id, person)}/>
+          key = {person.name}
+          person = {person} 
+          removePerson = {()=> removePerson(person.id, person)}
+          />
       )}
     
     
