@@ -6,11 +6,6 @@
       "id": 4
     },
     {
-      "name": "ana",
-      "number": "2",
-      "id": 6
-    },
-    {
       "name": "barbu",
       "number": "123515426",
       "id": 7
@@ -22,8 +17,13 @@
     },
     {
       "name": "maria",
-      "number": "1",
+      "number": "3",
       "id": 9
+    },
+    {
+      "name": "ion",
+      "number": "123",
+      "id": 10
     }
   ]
 }

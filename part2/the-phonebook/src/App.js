@@ -35,6 +35,27 @@ const Person = ({ person , removePerson}) =>{
 
   )
 }
+
+const Notification = ({ message }) => {
+
+    const styleOn = {
+      fontSize: 20,
+      padding: 4,
+      color: 'green',
+      borderStyle: 'solid',
+      backgroundColor: 'lightgrey'
+    }
+
+    const styleOff = {
+      fontSize: 20,
+      padding: 4
+    }
+  
+
+  return (
+    <div style={message !== null ? styleOn : styleOff}>{message}</div>
+  )
+}
   
 
 const App = () => {
@@ -42,6 +63,7 @@ const App = () => {
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] =useState('')
   const [searchText, setSearchText] =useState('')
+  const [successMessage, setSuccessMessage] = useState('')
 
   useEffect(() => {
     personService
@@ -62,11 +84,18 @@ const App = () => {
     personService
     .create(personObject)
     .then(returnedPerson => {
+      
       setPersons(persons.concat(returnedPerson))
       setNewName('')
       setNewNumber('')
+      setSuccessMessage(`Added ${newName}`)
+
+      setTimeout( () => {
+        setSuccessMessage(null)
+      }, 5000)
     })
-  }
+    }
+  
 
   const updatePerson = () => {
     const person = persons.find(p => p.name === newName)
@@ -77,10 +106,16 @@ const App = () => {
     personService
       .update(id, changedPerson)
       .then(returnedPerson => {
+        
         setPersons(persons.map(person => person.id !== id ? person : returnedPerson))
         setNewName('')
         setNewNumber('')
-      })
+
+        setSuccessMessage(`Updated ${newName}`)
+        setTimeout( () => {
+          setSuccessMessage(null)
+        }, 5000)
+    })
     }
   }
 
@@ -133,8 +168,10 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
-
+      
       <Filter value={searchText} onChange = {handleTextChange}/>
+
+      <Notification message = {successMessage}/>
 
       <h2>add new</h2>
 
