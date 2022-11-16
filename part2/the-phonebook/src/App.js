@@ -113,6 +113,13 @@ const App = () => {
           status: null})
       }, 5000)
     })
+    .catch(error => {
+      setErrorMessage({
+        ...errorMessage,
+        text: error.response.data.error,
+        status: error
+      })
+    })
     }
   
 
