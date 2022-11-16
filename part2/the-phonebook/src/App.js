@@ -117,7 +117,7 @@ const App = () => {
       setErrorMessage({
         ...errorMessage,
         text: error.response.data.error,
-        status: error
+        status: 'error'
       })
     })
     }
