@@ -113,14 +113,16 @@ const App = () => {
           status: null})
       }, 5000)
     })
-    .catch(error => {
-      setErrorMessage({
-        ...errorMessage,
-        text: error.response.data.error,
-        status: 'error'
-      })
-    })
-    }
+    .catch(error => 
+      setTimeout( () => {
+        setErrorMessage({
+          ...errorMessage,
+          text: error.response.data.error,
+          status: 'error'
+        })
+      }, 5000)
+    )
+  }
   
 
   const updatePerson = () => {
