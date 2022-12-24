@@ -1,5 +1,5 @@
-const LoginForm = (username, password) => {
-    <form onSubmit={handleLogin}>
+const LoginForm = (username, password, onSubmit) => {
+    <form onSubmit={onSubmit}>
     <div>
       username
         <input

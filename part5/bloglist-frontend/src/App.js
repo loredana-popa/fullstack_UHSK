@@ -11,13 +11,8 @@ const App = () => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
-  const [errorMessage, setErrorMessage] = useState('')
-  const [newBlog, setNewBlog] = useState({
-    title: '',
-    author: '',
-    url: ''
-  })
-
+  const [message, setMessage] = useState({text: null, status: null})
+  const [newBlog, setNewBlog] = useState({title: '', author: '', url: ''})
 
   useEffect(() => {
     blogService
@@ -29,6 +24,7 @@ const App = () => {
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')
+
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON)
       setUser(user)
@@ -38,7 +34,6 @@ const App = () => {
 
   const handleLogin = async (event) =>{
     event.preventDefault()
-    console.log('logging in with', username, password)
   
     try {
       const user = await loginServices.login({
@@ -50,13 +45,24 @@ const App = () => {
       )
       blogService.setToken(user.accessToken)
       setUser(user)
+
+      //clear all input values in the form
       setUsername('')
       setPassword('')
-      
+
     } catch (exception) {
-      setErrorMessage('Wrong credentials')
+      setMessage({
+        ...message,
+         text: 'Wrong credentials',
+         status: true})
+
+      //reset the error message   
       setTimeout(() => {
-        setErrorMessage(null)
+        setMessage({
+          ...message,
+          text: null,
+          status: null
+        })
       }, 5000)
     }
   }
@@ -76,9 +82,9 @@ const App = () => {
 
   const addBlog = (e) => {
     e.preventDefault()
-    const blogObject = newBlog
-    
-    blogService
+      const blogObject = {...newBlog}
+
+      blogService
       .create(blogObject)
       .then(returnedBlog => {
         setBlogs(blogs.concat(returnedBlog))
@@ -87,15 +93,43 @@ const App = () => {
           author: '',
           url: ''
         })
+        setMessage({
+          ...message,
+          text: `a new blog: ${newBlog.title} by ${newBlog.author} added`,
+          status: 'success'
+        })
+        setTimeout(() => {
+          setMessage({
+            ...message,
+            text: null,
+            status: null
+            })
+        }, 5000)
       })
+      
+    .catch (error =>
+      setMessage({
+        ...message,
+        text: error.response.data.error,
+        status: 'error'
+      }),
+      setTimeout(() => {
+        setMessage({
+          ...message,
+          text: null,
+          status: null
+        })
+      }, 5000)
+    )
   }
-
 
   if (user === null) {
     return (
       <div>
-        <Notification message={errorMessage} />
+        <Notification message={message} />
+
         <h2>Log in to application</h2>
+
         <form onSubmit={handleLogin}>
           <div>
             username
@@ -103,7 +137,7 @@ const App = () => {
               type="text"
               value={username}
               name="Username"
-              onChange={({ target}) => setUsername(target.value)}
+              onChange={event => setUsername(event.target.value)}
               />
           </div>
   
@@ -113,7 +147,7 @@ const App = () => {
               type="password"
               value={password}
               name="Password"
-              onChange={({ target }) => setPassword(target.value)}
+              onChange={event => setPassword(event.target.value)}
               />
           </div>
   
@@ -126,6 +160,10 @@ const App = () => {
   return (
     <div>
       <h2>blogs</h2>
+
+      <Notification 
+        message={message}
+      />
 
       <p>{user.name} logged in 
         <button onClick={handleLogout}>logout</button>
