@@ -1,7 +1,9 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
+
 import Blog from './components/Blog'
 import Notification from './components/Notification'
 import BlogForm from './components/blogForm'
+import Togglable from './components/Togglable'
 
 import blogService from './services/blogs'
 import loginServices from './services/login'
@@ -12,7 +14,7 @@ const App = () => {
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
   const [message, setMessage] = useState({text: null, status: null})
-  const [newBlog, setNewBlog] = useState({title: '', author: '', url: ''})
+  const blogFormRef = useRef()
 
   useEffect(() => {
     blogService
@@ -63,6 +65,9 @@ const App = () => {
           text: null,
           status: null
         })
+
+        setUsername('')
+        setPassword('')
       }, 5000)
     }
   }
@@ -73,39 +78,25 @@ const App = () => {
     setUser(null)
   }
 
-  const handleChange = (e) => {
-    const {name, value} = e.target
-    setNewBlog( (prev) => {
-      return { ...prev, [name]: value}
-    })
-  }
-
-  const addBlog = (e) => {
-    e.preventDefault()
-      const blogObject = {...newBlog}
-
-      blogService
-      .create(blogObject)
-      .then(returnedBlog => {
-        setBlogs(blogs.concat(returnedBlog))
-        setNewBlog({
-          title: '',
-          author: '',
-          url: ''
-        })
+  const addBlog = (blogObject) => {
+    blogFormRef.current.toggleVisibility()
+    blogService
+    .create(blogObject)
+    .then(returnedBlog => {
+      setBlogs(blogs.concat(returnedBlog))
+      setMessage({
+        ...message,
+        text: `a new blog: ${blogObject.title} by ${blogObject.author} added`,
+        status: 'success'
+      })
+      setTimeout(() => {
         setMessage({
           ...message,
-          text: `a new blog: ${newBlog.title} by ${newBlog.author} added`,
-          status: 'success'
-        })
-        setTimeout(() => {
-          setMessage({
-            ...message,
-            text: null,
-            status: null
-            })
-        }, 5000)
-      })
+          text: null,
+          status: null
+          })
+      }, 5000)
+    })
       
     .catch (error =>
       setMessage({
@@ -119,9 +110,12 @@ const App = () => {
           text: null,
           status: null
         })
+        
       }, 5000)
     )
   }
+
+
 
   if (user === null) {
     return (
@@ -170,11 +164,12 @@ const App = () => {
       </p> 
       
       <h2>create new</h2>
-      
-      <BlogForm 
-        onChange={handleChange} 
-        onSubmit={addBlog}
-      />
+    
+      <Togglable ref = {blogFormRef}>
+        <BlogForm 
+          createBlog={addBlog}
+        />
+      </Togglable>
 
       {blogs.map(blog =>
         <Blog key={blog.id} blog={blog} />

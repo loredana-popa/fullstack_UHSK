@@ -1,11 +1,34 @@
-const blogForm = ({ onChange, onSubmit}) => {
+import { useState} from 'react'
+
+const BlogForm = ({ createBlog }) => {
+    const [newBlog, setNewBlog] =  useState({title: '', author: '', url: ''})
+
+    const handleChange = (e) => {
+        const {name, value} = e.target
+        setNewBlog( (prev) => {
+          return { ...prev, [name]: value}
+        })
+      }
+
+    const addBlog = (e) => {
+        e.preventDefault()
+        createBlog({...newBlog})
+        setNewBlog({
+            title: '',
+            author: '',
+            url: ''
+          })
+  
+    }
+
     return (
-        <form onSubmit={onSubmit}>
+        <form onSubmit={addBlog}>
             <div>title: 
                 <input
                 type="text"
                 name="title"
-                onChange={onChange}
+                value= {newBlog.title}
+                onChange={handleChange}
                 />
             </div>
 
@@ -13,7 +36,8 @@ const blogForm = ({ onChange, onSubmit}) => {
                 <input
                 type="text"
                 name="author"
-                onChange={onChange}
+                value= {newBlog.author}
+                onChange={handleChange}
                 />
             </div>
 
@@ -21,7 +45,8 @@ const blogForm = ({ onChange, onSubmit}) => {
                 <input
                 type="text"
                 name="url"
-                onChange={onChange}
+                value= {newBlog.url}
+                onChange={handleChange}
                 />
             </div>
             <button type='submit'>create</button>
@@ -29,4 +54,4 @@ const blogForm = ({ onChange, onSubmit}) => {
     )
 }
 
-export default blogForm
+export default BlogForm
