@@ -1,6 +1,7 @@
 import { useState } from 'react'
 
 const Blog = ({blog, key}) => {
+  const [newBlog, setNewBlog] = useState({...blog})
   const [showDetails, setShowDetails] = useState(false)
   const [buttonLable, setButtonLable] = useState('view')
 
@@ -18,6 +19,14 @@ const Blog = ({blog, key}) => {
     showDetails ? setButtonLable('view') : setButtonLable('hide')
   }
 
+  // console.log(newBlog)
+  
+  const increaseLikes = (e) => {
+    e.preventDefault()
+    console.log("item clicked")
+  }
+// console.log(newBlog)
+
   return (
     <div style={blogStyle}>
       {blog.title} {blog.author}
@@ -25,8 +34,8 @@ const Blog = ({blog, key}) => {
       <button onClick={toggleViewDetails}>{buttonLable}</button>
 
       <div style={detailsStyle}>
-        <div>http: {blog.url}</div>
-        <div>likes {blog.likes} <button>like</button></div>
+        <div> {blog.url}</div>
+        <div>likes: {blog.likes} <button onClick={increaseLikes}>like</button></div>
         <div>{blog.author}</div>
       </div>
     </div>
