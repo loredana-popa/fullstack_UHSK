@@ -22,4 +22,12 @@ const response = await axios.post(baseUrl, newObject, config)
 return response.data
 }
 
-export default { getAll, setToken, create} 
+const update = (id, newObject) => {
+  const config = {
+    headers: { Authorization: token}
+  }
+  const request = axios.put(`${baseUrl}/${id}`, newObject, config )
+  return request.then(response => response.data)
+}
+
+export default { getAll, create, update, setToken} 

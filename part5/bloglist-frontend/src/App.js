@@ -22,7 +22,7 @@ const App = () => {
       .then(blogs =>
         setBlogs(blogs)
     )  
-  }, [])
+  }, [blogs])
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')
@@ -115,6 +115,27 @@ const App = () => {
     )
   }
 
+  const updateBlog = (id, blogObject) => {
+    const changedBlog = { ...blogObject}
+
+    blogService
+      .update(id, changedBlog)
+      .catch(error => {
+        setMessage({
+          ...message,
+          text: error.message,
+          status: 'error'})
+
+        setTimeout(() => {
+          setMessage({
+            ...message,
+            text: null,
+            status: null
+          })
+        }, 5000)
+        setBlogs(blogs.filter(b => b.id !== id))
+      })
+  }
 
 
   if (user === null) {
@@ -169,8 +190,8 @@ const App = () => {
         />
       </Togglable>
 
-      {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} />
+      {blogs.map((blog, i) =>
+        <Blog key={i} blog={blog} updateBlog={updateBlog}/>
       )}
     </div>
   )
