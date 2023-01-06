@@ -20,9 +20,11 @@ const App = () => {
     blogService
       .getAll()
       .then(blogs =>
-        setBlogs(blogs)
+        setBlogs(blogs.sort((a, b) => {
+          return b.likes - a.likes
+        }))
     )  
-  }, [blogs])
+  }, [])
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')
@@ -116,14 +118,17 @@ const App = () => {
   }
 
   const updateBlog = (id, blogObject) => {
-    const changedBlog = { ...blogObject}
+    const changedBlog = {...blogObject}
 
     blogService
       .update(id, changedBlog)
+      .then(
+        setBlogs(blogs.map(blog => blog.id !== id ? blog : changedBlog))
+      )
       .catch(error => {
         setMessage({
           ...message,
-          text: error.message,
+          text: error.response.data.error,
           status: 'error'})
 
         setTimeout(() => {
@@ -133,7 +138,7 @@ const App = () => {
             status: null
           })
         }, 5000)
-        setBlogs(blogs.filter(b => b.id !== id))
+        // setBlogs(blogs.filter(b => b.id !== id))
       })
   }
 
