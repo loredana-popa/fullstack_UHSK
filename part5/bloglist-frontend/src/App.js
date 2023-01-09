@@ -13,7 +13,7 @@ const App = () => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
-  const [message, setMessage] = useState({text: null, status: null})
+  const [message, setMessage] = useState({ text: null, status: null })
   const blogFormRef = useRef()
 
   useEffect(() => {
@@ -23,7 +23,7 @@ const App = () => {
         setBlogs(blogs.sort((a, b) => {
           return b.likes - a.likes
         }))
-    )  
+      )
   }, [])
 
   useEffect(() => {
@@ -36,9 +36,9 @@ const App = () => {
     }
   }, [])
 
-  const handleLogin = async (event) =>{
+  const handleLogin = async (event) => {
     event.preventDefault()
-  
+
     try {
       const user = await loginServices.login({
         username, password,
@@ -57,10 +57,10 @@ const App = () => {
     } catch (exception) {
       setMessage({
         ...message,
-         text: 'Wrong credentials',
-         status: true})
+        text: 'Wrong credentials',
+        status: true })
 
-      //reset the error message   
+      //reset the error message
       setTimeout(() => {
         setMessage({
           ...message,
@@ -83,42 +83,42 @@ const App = () => {
   const addBlog = (blogObject) => {
     blogFormRef.current.toggleVisibility()
     blogService
-    .create(blogObject)
-    .then(returnedBlog => {
-      setBlogs(blogs.concat(returnedBlog))
-      setMessage({
-        ...message,
-        text: `a new blog: ${blogObject.title} by ${blogObject.author} added`,
-        status: 'success'
-      })
-      setTimeout(() => {
+      .create(blogObject)
+      .then(returnedBlog => {
+        setBlogs(blogs.concat(returnedBlog))
         setMessage({
           ...message,
-          text: null,
-          status: null
+          text: `a new blog: ${blogObject.title} by ${blogObject.author} added`,
+          status: 'success'
+        })
+        setTimeout(() => {
+          setMessage({
+            ...message,
+            text: null,
+            status: null
           })
-      }, 5000)
-    })
-      
-    .catch (error =>
-      setMessage({
-        ...message,
-        text: error.response.data.error,
-        status: 'error'
-      }),
+        }, 5000)
+      })
+
+      .catch (error =>
+        setMessage({
+          ...message,
+          text: error.response.data.error,
+          status: 'error'
+        }),
       setTimeout(() => {
         setMessage({
           ...message,
           text: null,
           status: null
         })
-        
+
       }, 5000)
-    )
+      )
   }
 
   const updateBlog = (id, blogObject) => {
-    const changedBlog = {...blogObject}
+    const changedBlog = { ...blogObject }
 
     blogService
       .update(id, changedBlog)
@@ -129,7 +129,7 @@ const App = () => {
         setMessage({
           ...message,
           text: error.response.data.error,
-          status: 'error'})
+          status: 'error' })
 
         setTimeout(() => {
           setMessage({
@@ -142,7 +142,7 @@ const App = () => {
   }
 
   const deleteBlog = (id, blogObject) => {
-    const blogToDelete = {...blogObject}
+    const blogToDelete = { ...blogObject }
     console.log('ths blog will be deleted', blogToDelete)
 
     blogService
@@ -154,7 +154,7 @@ const App = () => {
         setMessage({
           ...message,
           text: error.response.data.error,
-          status: 'error'})
+          status: 'error' })
 
         setTimeout(() => {
           setMessage({
@@ -177,24 +177,24 @@ const App = () => {
         <form onSubmit={handleLogin}>
           <div>
             username
-              <input
+            <input
               type="text"
               value={username}
               name="Username"
               onChange={event => setUsername(event.target.value)}
-              />
+            />
           </div>
-  
+
           <div>
             password
-              <input
+            <input
               type="password"
               value={password}
               name="Password"
               onChange={event => setPassword(event.target.value)}
-              />
+            />
           </div>
-  
+
           <button type="submit">login</button>
         </form>
       </div>
@@ -205,22 +205,22 @@ const App = () => {
     <div>
       <h2>blogs</h2>
 
-      <Notification 
+      <Notification
         message={message}
       />
 
-      <p>{user.name} logged in 
+      <p>{user.name} logged in
         <button onClick={handleLogout}>logout</button>
-      </p> 
-    
+      </p>
+
       <Togglable ref = {blogFormRef}>
-        <BlogForm 
+        <BlogForm
           createBlog={addBlog}
         />
       </Togglable>
 
       {blogs.map((blog, i) =>
-        <Blog 
+        <Blog
           key={i}
           blog={blog}
           updateBlog={updateBlog}

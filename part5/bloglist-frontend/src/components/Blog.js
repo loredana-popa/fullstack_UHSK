@@ -1,9 +1,10 @@
 import { useState } from 'react'
+import PropTypes from 'prop-types'
 
-const Blog = ({blog, updateBlog, deleteBlog, loggedUser}) => {
+const Blog = ({ blog, updateBlog, deleteBlog, loggedUser }) => {
   const [showDetails, setShowDetails] = useState(false)
   const [buttonLable, setButtonLable] = useState('view')
-  const [newBlog, setNewBlog] = useState({...blog})
+  const [newBlog, setNewBlog] = useState({ ...blog })
 
   const blogStyle = {
     paddingTop: 10,
@@ -12,7 +13,7 @@ const Blog = ({blog, updateBlog, deleteBlog, loggedUser}) => {
     borderWidth: 1,
     marginBottom: 5
   }
-  const detailsStyle =  showDetails ? {display: '' } : {display: 'none'} 
+  const detailsStyle =  showDetails ? { display: '' } : { display: 'none' }
 
   const toggleViewDetails = () => {
     setShowDetails(!showDetails)
@@ -21,17 +22,16 @@ const Blog = ({blog, updateBlog, deleteBlog, loggedUser}) => {
 
   //show delete button only for blogs created by the logged in user
   const showDeleteButton = loggedUser === newBlog.user.username
-    ? {display: '' } 
-    : {display: 'none'} 
-  
-  
+    ? { display: '' }
+    : { display: 'none' }
+
   const increaseLikes = (e) => {
     e.preventDefault()
     const elId = newBlog.id
 
     if(newBlog.id === elId) {
       const nrLikes = newBlog.likes + 1
-      setNewBlog({...newBlog, likes: nrLikes} )
+      setNewBlog( { ...newBlog, likes: nrLikes } )
     }
     updateBlog(elId, newBlog)
     console.log('update blog', elId, newBlog)
@@ -42,12 +42,10 @@ const Blog = ({blog, updateBlog, deleteBlog, loggedUser}) => {
     e.preventDefault()
     const elId = newBlog.id
 
-    
     if(window.confirm(`Remove blog ${newBlog.title} by ${newBlog.author}`)) {
       deleteBlog(elId, newBlog)
     }
   }
-  
 
   return (
     <div style={blogStyle} >
@@ -58,7 +56,7 @@ const Blog = ({blog, updateBlog, deleteBlog, loggedUser}) => {
       <div style={detailsStyle} id={blog.id}>
         <div> {blog.url}</div>
 
-        <div>likes: {blog.likes} 
+        <div>likes: {blog.likes}
           <button onClick={increaseLikes}>like</button>
         </div>
 
@@ -70,7 +68,12 @@ const Blog = ({blog, updateBlog, deleteBlog, loggedUser}) => {
 
       </div>
     </div>
-  ) 
-  }
+  )
+}
+
+Blog.PropTypes = {
+  updateBlog: PropTypes.func.isRequired,
+  deleteBlog:PropTypes.func.isRequired
+}
 
 export default Blog
