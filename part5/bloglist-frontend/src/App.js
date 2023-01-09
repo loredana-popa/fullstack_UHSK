@@ -122,7 +122,7 @@ const App = () => {
 
     blogService
       .update(id, changedBlog)
-      .then(
+      .then(() =>
         setBlogs(blogs.map(blog => blog.id !== id ? blog : changedBlog))
       )
       .catch(error => {
@@ -138,7 +138,31 @@ const App = () => {
             status: null
           })
         }, 5000)
-        // setBlogs(blogs.filter(b => b.id !== id))
+      })
+  }
+
+  const deleteBlog = (id, blogObject) => {
+    const blogToDelete = {...blogObject}
+    console.log('ths blog will be deleted', blogToDelete)
+
+    blogService
+      .remove(id, blogToDelete)
+      .then(() =>
+        setBlogs(blogs.filter(blog => blog.id !== id ))
+      )
+      .catch(error => {
+        setMessage({
+          ...message,
+          text: error.response.data.error,
+          status: 'error'})
+
+        setTimeout(() => {
+          setMessage({
+            ...message,
+            text: null,
+            status: null
+          })
+        }, 5000)
       })
   }
 
@@ -196,7 +220,12 @@ const App = () => {
       </Togglable>
 
       {blogs.map((blog, i) =>
-        <Blog key={i} blog={blog} updateBlog={updateBlog}/>
+        <Blog 
+          key={i}
+          blog={blog}
+          updateBlog={updateBlog}
+          deleteBlog={deleteBlog}
+          loggedUser={user.username} />
       )}
     </div>
   )
