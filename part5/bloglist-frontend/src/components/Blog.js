@@ -42,8 +42,10 @@ const Blog = ({blog, updateBlog, deleteBlog, loggedUser}) => {
     e.preventDefault()
     const elId = newBlog.id
 
-    console.log('delete this blog', elId,newBlog)
-    deleteBlog(elId, newBlog)
+    
+    if(window.confirm(`Remove blog ${newBlog.title} by ${newBlog.author}`)) {
+      deleteBlog(elId, newBlog)
+    }
   }
   
 
