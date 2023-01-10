@@ -20,10 +20,6 @@ module.exports = {
         "react", "jest"
     ],
     "rules": {
-        "linebreak-style": [
-            "error",
-            "windows"
-        ],
         "quotes": [
             "error",
             "single"
