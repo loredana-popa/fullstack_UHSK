@@ -1,6 +1,7 @@
 import React from 'react'
 import { render, screen } from '@testing-library/react'
 import '@testing-library/jest-dom/extend-expect'
+import userEvent from '@testing-library/user-event'
 
 import Blog from './Blog'
 
@@ -37,5 +38,15 @@ describe('<Blog />', () => {
 
         expect(div).toHaveStyle('display: none')
     })
+
+    test('after clicking the view details button the blog details (url,likes) appear', async () => {
+        const user = userEvent.setup()
+        const button = container.querySelector('.view-bttn')
+        await user.click(button)
+
+        const div =container.querySelector('.blog-details')
+        expect(div).not.toHaveStyle('display: none')
+    })
+
 })
 

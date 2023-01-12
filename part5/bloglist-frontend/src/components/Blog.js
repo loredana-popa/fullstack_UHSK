@@ -3,7 +3,7 @@ import { useState } from 'react'
 
 const Blog = ({ blog, updateBlog, deleteBlog, loggedUser }) => {
   const [showDetails, setShowDetails] = useState(false)
-  const [buttonLable, setButtonLable] = useState('view')
+  const [buttonLable, setButtonLable] = useState('view details')
   const [newBlog, setNewBlog] = useState({ ...blog })
 
   const blogStyle = {
@@ -54,7 +54,9 @@ const Blog = ({ blog, updateBlog, deleteBlog, loggedUser }) => {
         {blog.title} {blog.author}
       </div>
 
-      <button onClick={toggleViewDetails}>{buttonLable}</button>
+      <button onClick={toggleViewDetails} className='view-bttn'>
+        {buttonLable}
+      </button>
 
       <div style={detailsStyle} className='blog-details'>
 
