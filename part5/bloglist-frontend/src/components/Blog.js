@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import PropTypes from 'prop-types'
+// import PropTypes from 'prop-types'
 
 const Blog = ({ blog, updateBlog, deleteBlog, loggedUser }) => {
   const [showDetails, setShowDetails] = useState(false)
@@ -21,11 +21,11 @@ const Blog = ({ blog, updateBlog, deleteBlog, loggedUser }) => {
   }
 
   //show delete button only for blogs created by the logged in user
-  const showDeleteButton = loggedUser === newBlog.user.username
-    ? { display: '' }
-    : { display: 'none' }
+  const showDeleteButton = loggedUser === blog.user.username
+      ? { display: '' }
+      : { display: 'none' }
 
-  const increaseLikes = (e) => {
+  const incrementLikes = (e) => {
     e.preventDefault()
     const elId = newBlog.id
 
@@ -48,19 +48,23 @@ const Blog = ({ blog, updateBlog, deleteBlog, loggedUser }) => {
   }
 
   return (
-    <div style={blogStyle} >
-      {blog.title} {blog.author}
+    <div style={blogStyle} className='blog'>
+
+      <div className='blog-summary'>
+        {blog.title} {blog.author}
+      </div>
 
       <button onClick={toggleViewDetails}>{buttonLable}</button>
 
-      <div style={detailsStyle} id={blog.id}>
+      <div style={detailsStyle} className='blog-details'>
+
         <div> {blog.url}</div>
 
-        <div>likes: {blog.likes}
-          <button onClick={increaseLikes}>like</button>
+        <div data-testid='likes'>likes: {blog.likes}
+          <button onClick={incrementLikes}>like</button>
         </div>
 
-        <div>{blog.author}</div>
+        <div data-testid='author'>{blog.author}</div>
 
         <div style={showDeleteButton}>
           <button onClick={removeBlog}>remove</button>
@@ -71,9 +75,9 @@ const Blog = ({ blog, updateBlog, deleteBlog, loggedUser }) => {
   )
 }
 
-Blog.PropTypes = {
-  updateBlog: PropTypes.func.isRequired,
-  deleteBlog:PropTypes.func.isRequired
-}
+// Blog.propTypes = {
+//   updateBlog: PropTypes.func.isRequired,
+//   deleteBlog:PropTypes.func.isRequired
+// }
 
 export default Blog
