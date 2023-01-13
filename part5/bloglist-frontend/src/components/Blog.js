@@ -54,7 +54,7 @@ const Blog = ({ blog, updateBlog, deleteBlog, loggedUser }) => {
         {blog.title} {blog.author}
       </div>
 
-      <button onClick={toggleViewDetails} className='view-bttn'>
+      <button onClick={toggleViewDetails} className='view-btn'>
         {buttonLable}
       </button>
 
@@ -62,8 +62,11 @@ const Blog = ({ blog, updateBlog, deleteBlog, loggedUser }) => {
 
         <div> {blog.url}</div>
 
-        <div data-testid='likes'>likes: {blog.likes}
-          <button onClick={incrementLikes}>like</button>
+        <div>
+          likes: {blog.likes}
+          <button onClick={incrementLikes} className='like-btn'>
+            like
+          </button>
         </div>
 
         <div data-testid='author'>{blog.author}</div>
