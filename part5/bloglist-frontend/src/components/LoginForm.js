@@ -1,15 +1,19 @@
 import PropTypes from 'prop-types'
 
-const LoginForm = (username, password, handleSubmit) => {
+const LoginForm = ({ username, password, handleSubmit }) => {
   const handleChange = (event) => {
     
   }
 
   return(
-    <form onSubmit={handleSubmit}>
+    <div>
+      <h2>Log in to application</h2>
+
+      <form onSubmit={handleSubmit}>
       <div>
         username
           <input
+          id='username'
           type="text"
           value={username}
           name="Username"
@@ -20,6 +24,7 @@ const LoginForm = (username, password, handleSubmit) => {
       <div>
         password
           <input
+          id='password'
           type="password"
           value={password}
           name="Password"
@@ -27,8 +32,10 @@ const LoginForm = (username, password, handleSubmit) => {
           />
       </div>
 
-      <button type="submit">login</button>
+      <button id='login-button' type="submit">login</button>
   </form>
+    </div>
+  
   )
 }
 
