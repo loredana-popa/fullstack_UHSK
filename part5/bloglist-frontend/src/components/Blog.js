@@ -73,7 +73,7 @@ const Blog = ({ blog, updateBlog, deleteBlog, loggedUser }) => {
         <div data-testid='author' className='author-details'>{blog.author}</div>
 
         <div style={showDeleteButton}>
-          <button onClick={removeBlog}>remove</button>
+          <button onClick={removeBlog} className='remove-btn'>remove</button>
         </div>
 
       </div>

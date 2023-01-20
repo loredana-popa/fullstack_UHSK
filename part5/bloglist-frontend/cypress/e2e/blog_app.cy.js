@@ -108,15 +108,29 @@ describe('Blog app', function() {
             })
 
             it ('a user can like a blog', function() {
+                cy.contains('Second blog Loredana')
+                  .contains('view details').click()
+
+                cy.contains('Second blog Loredana')
+                  .parent().find('.like-btn').click()
+
+                cy.contains('Second blog Loredana')
+                  .parent().should('contain', 'likes: 1')
+  
+            })
+
+            it.only('the user who created a blog can delete it', function() {
                 cy.contains('Third blog Loredana')
                   .contains('view details').click()
 
                 cy.contains('Third blog Loredana')
-                  .parent().find('.like-btn').click()
+                .parent().find('.remove-btn').click()
 
-                cy.contains('Third blog Loredana')
-                  .parent().should('contain', 'likes: 1')
-  
+                cy.on('window:confirm', (t)=>{
+                    expect(t).to.contains('Remove blog Third blog by Loredana')
+                })
+
+                cy.get('html').should('not.contain', 'Third blog Loredana')
             })
         })
        
