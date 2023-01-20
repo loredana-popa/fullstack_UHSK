@@ -25,16 +25,14 @@ const Blog = ({ blog, updateBlog, deleteBlog, loggedUser }) => {
       ? { display: '' }
       : { display: 'none' }
 
+
   const incrementLikes = (e) => {
     e.preventDefault()
-    const elId = newBlog.id
+    const elId = blog.id
 
-    if(newBlog.id === elId) {
-      const nrLikes = newBlog.likes + 1
-      setNewBlog( { ...newBlog, likes: nrLikes } )
-    }
+    setNewBlog({ ...newBlog , likes : ++ newBlog.likes })
     updateBlog(elId, newBlog)
-    console.log('update blog', elId, newBlog)
+
   }
 
 
@@ -48,28 +46,31 @@ const Blog = ({ blog, updateBlog, deleteBlog, loggedUser }) => {
   }
 
   return (
-    <div style={blogStyle} className='blog'>
+    <div style={blogStyle} className='blog' id={blog.id}>
 
       <div className='blog-summary'>
         {blog.title} {blog.author}
-      </div>
 
-      <button onClick={toggleViewDetails} className='view-btn'>
-        {buttonLable}
-      </button>
+        <button onClick={toggleViewDetails} className='view-btn'>
+          {buttonLable}
+        </button>
+
+      </div>
 
       <div style={detailsStyle} className='blog-details'>
 
-        <div> {blog.url}</div>
+        <div className='url-details'> {blog.url}</div>
 
-        <div>
+        <div className='likes-details'>
           likes: {blog.likes}
+
           <button onClick={incrementLikes} className='like-btn'>
             like
           </button>
+
         </div>
 
-        <div data-testid='author'>{blog.author}</div>
+        <div data-testid='author' className='author-details'>{blog.author}</div>
 
         <div style={showDeleteButton}>
           <button onClick={removeBlog}>remove</button>

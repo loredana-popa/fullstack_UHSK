@@ -11,12 +11,12 @@ describe('Blog app', function() {
     })
 
     it('Login form is shown', function() {
-    cy.visit('http://localhost:3000')
-    cy.contains('Log in to application')
-    cy.contains('username')
-    cy.contains('password')
-    cy.contains('login')
-    })
+        cy.visit('http://localhost:3000')
+        cy.contains('Log in to application')
+        cy.contains('username')
+        cy.contains('password')
+        cy.contains('login')
+        })
 
 
     describe('Login', function() {
@@ -57,18 +57,68 @@ describe('Blog app', function() {
             })
         })
     
-        it('A blog can be created', function() {
-            cy.contains('create new blog').click()
+        it('a blog can be created', function() {
+            cy.contains('create new blog')
+              .click() 
+
             cy.get('.title-input').type('Create a first blog')
             cy.get('.auth-input').type('Loredana')
             cy.get('.url-input').type('http://www.firstblog.com')
             cy.get('#addBlog-btn').click()
 
             cy.get('.message')
-            .should('contain', 'a new blog: Create a first blog by Loredana added') 
-            .and('have.css', 'color', 'rgb(0, 128, 0)')
+              .should('contain', 'a new blog: Create a first blog by Loredana added') 
+              .and('have.css', 'color', 'rgb(0, 128, 0)')
+
             cy.get('html').should('contain', 'Create a first blog Loredana')
             
         })
+
+        describe('and some blogs exist', function() {
+            beforeEach(function () {
+                cy.createBlog({
+                    title: 'First blog',
+                    author: 'Loredana',
+                    url:'http://www.firstblog.com'
+                }) 
+                cy.createBlog({
+                    title: 'Second blog',
+                    author: 'Loredana',
+                    url:'http://www.secondblog.com'
+                }) 
+                cy.createBlog({
+                    title: 'Third blog',
+                    author: 'Loredana',
+                    url:'http://www.thirdblog.com'
+                })
+            })
+
+            it('a user can see the details of a blog', function () {
+                cy.contains('First blog Loredana')
+                  .contains('view details').click()
+                 
+                cy.contains('First blog Loredana')
+                  .parent().should('contain', 'http://www.firstblog.com')
+                    .and('contain', 'Loredana')
+                    .and('contain', 'likes: 0')
+                  
+                  .contains('hide')
+                  
+
+            })
+
+            it ('a user can like a blog', function() {
+                cy.contains('Third blog Loredana')
+                  .contains('view details').click()
+
+                cy.contains('Third blog Loredana')
+                  .parent().find('.like-btn').click()
+
+                cy.contains('Third blog Loredana')
+                  .parent().should('contain', 'likes: 1')
+  
+            })
+        })
+       
     })
 })
