@@ -79,17 +79,20 @@ describe('Blog app', function() {
                 cy.createBlog({
                     title: 'First blog',
                     author: 'Loredana',
-                    url:'http://www.firstblog.com'
+                    url:'http://www.firstblog.com',
+                    likes: 3
                 }) 
                 cy.createBlog({
                     title: 'Second blog',
                     author: 'Loredana',
-                    url:'http://www.secondblog.com'
+                    url:'http://www.secondblog.com',
+                    likes: 2
                 }) 
                 cy.createBlog({
                     title: 'Third blog',
                     author: 'Loredana',
-                    url:'http://www.thirdblog.com'
+                    url:'http://www.thirdblog.com',
+                    likes: 1
                 })
             })
 
@@ -100,11 +103,9 @@ describe('Blog app', function() {
                 cy.contains('First blog Loredana')
                   .parent().should('contain', 'http://www.firstblog.com')
                     .and('contain', 'Loredana')
-                    .and('contain', 'likes: 0')
+                    .and('contain', 'likes: 3')
                   
                   .contains('hide')
-                  
-
             })
 
             it ('a user can like a blog', function() {
@@ -115,11 +116,11 @@ describe('Blog app', function() {
                   .parent().find('.like-btn').click()
 
                 cy.contains('Second blog Loredana')
-                  .parent().should('contain', 'likes: 1')
+                  .parent().should('contain', 'likes: 3')
   
             })
 
-            it.only('the user who created a blog can delete it', function() {
+            it('the user who created a blog can delete it', function() {
                 cy.contains('Third blog Loredana')
                   .contains('view details').click()
 
@@ -131,6 +132,18 @@ describe('Blog app', function() {
                 })
 
                 cy.get('html').should('not.contain', 'Third blog Loredana')
+            })
+
+            it('the blogs are ordered correctly based on the no. of likes', function () {
+                cy.get('.blog').eq(0).should('contain', 'First blog Loredana')
+                cy.get('.blog').eq(1).should('contain', 'Second blog Loredana')
+                cy.get('.blog').eq(2).should('contain', 'Third blog Loredana')
+
+                cy.contains('Second blog Loredana')
+                  .contains('view details').click()
+
+                cy.contains('Second blog Loredana')
+                  .parent().find('.like-btn').click()
             })
         })
        

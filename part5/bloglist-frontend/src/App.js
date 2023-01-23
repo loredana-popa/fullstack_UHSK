@@ -17,6 +17,7 @@ const App = () => {
   const blogFormRef = useRef()
 
   useEffect(() => {
+    console.log('app rendered')
     blogService
       .getAll()
       .then(blogs =>
