@@ -2,39 +2,39 @@ import { useDispatch, useSelector } from "react-redux"
 import { increaseVotesFor } from "../reducers/anecdoteReducer"
 
 const Anecdote = ({ anecdote, handleClick }) => {
-    return (
-        <div>
-            <div>{anecdote.content}</div>
-            <div>
-                has {anecdote.votes}
-                <button onClick={handleClick}>vote</button>
-            </div>
+  return (
+    <div>
+      <div>{anecdote.content}</div>
+      <div>
+        has {anecdote.votes}
+        <button onClick={handleClick}>vote</button>
+      </div>
 
 
-        </div>
-    )
+    </div>
+  )
 
 }
 
 const AnecdoteList = () => {
-    const dispatch = useDispatch()
-    const anecdotes = useSelector(state => state)
-    console.log(anecdotes)
+  const dispatch = useDispatch()
+  const anecdotes = useSelector(state => state.anecdotes)
+  console.log(anecdotes)
 
-    return (
-        <div>
-            {anecdotes.map((anecdote) =>
-                <Anecdote
-                    key={anecdote.id}
-                    anecdote={anecdote}
-                    handleClick={() =>
-                        dispatch(increaseVotesFor(anecdote.id))
-                    }
-                />
-            )}
+  return (
+    <div>
+      {anecdotes.map(anecdote =>
+        <Anecdote
+          key={anecdote.id}
+          anecdote={anecdote}
+          handleClick={() =>
+            dispatch(increaseVotesFor(anecdote.id))
+          }
+        />
+      )}
 
-        </div>
-    )
+    </div>
+  )
 }
 
 export default AnecdoteList
