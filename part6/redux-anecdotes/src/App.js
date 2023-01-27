@@ -1,4 +1,4 @@
-import AnecdoteList from './components/AnectodeList'
+import AnecdoteList from './components/AnectoteList'
 import AnecdoteForm from './components/AnecdoteForm'
 import Notification from './components/Notification'
 
