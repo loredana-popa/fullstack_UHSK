@@ -11,6 +11,7 @@ const FilterAnecdots = () => {
   }
   
   return (
+  
     <form>
       <label>filter:</label>
       <input 
@@ -18,7 +19,9 @@ const FilterAnecdots = () => {
         name='filter'
         onChange={handleChange} 
       />
-    </form>
+      </form>
+ 
+
   )
 }
 
