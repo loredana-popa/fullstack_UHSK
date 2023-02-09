@@ -1,5 +1,4 @@
 import { useQuery } from 'react-query'
-import axios from 'axios'
 import AnecdoteForm from './components/AnecdoteForm'
 import Notification from './components/Notification'
 import { getAnecdotes } from './requests'
@@ -10,7 +9,6 @@ const App = () => {
     console.log('vote')
   }
 
-
   const result = useQuery(
     'anecdotes',
     getAnecdotes,
@@ -19,7 +17,9 @@ const App = () => {
     }
   )
 
-  console.log(result)
+  // console.log(result)
+
+  const anecdotes = result.data
 
   if( result.isLoading ) {
     return <div>loading data ...</div>
@@ -28,8 +28,6 @@ const App = () => {
   if (result.isError) {
     return <div>anecdote service not available due to {result.error.message}</div>
   }
-
-  const anecdotes = result.data
 
   return (
     <div>
