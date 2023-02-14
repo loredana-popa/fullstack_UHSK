@@ -1,9 +1,25 @@
 import { useMutation, useQuery, useQueryClient } from 'react-query'
+import { useReducer } from 'react'
 import AnecdoteForm from './components/AnecdoteForm'
 import Notification from './components/Notification'
 import { getAnecdotes, updateAnecdote } from './requests'
+import NotificationContext from './NotificationContext'
+
+const notificationReducer = (state, action) => {
+  switch (action.type) {
+    case "ADDED":
+      return state = action.payload
+    case "VOTED":
+      return state = action.payload
+    case "HIDE":
+      return state = ''
+    default:
+      return state 
+  }
+}
 
 const App = () => {
+  const [notification, notificationDispatch] = useReducer(notificationReducer, '')
 
   const queryClient = useQueryClient()
 
@@ -15,6 +31,15 @@ const App = () => {
 
   const handleVote = (anecdote) => {
     updateAnecdoteMutation.mutate({ ...anecdote, votes: ++ anecdote.votes })
+    notificationDispatch({
+      type: 'VOTED',
+      payload: `you voted: ${anecdote.content}`
+     })
+    setTimeout(()=> {
+      notificationDispatch({
+        type: 'HIDE'
+      })
+    },5000)
   }
 
   const result = useQuery(
@@ -36,24 +61,28 @@ const App = () => {
   }
 
   return (
+    <NotificationContext.Provider value={[notification, notificationDispatch]}>
     <div>
       <h3>Anecdote app</h3>
-    
-      <Notification />
-      <AnecdoteForm />
-    
-      {anecdotes.map(anecdote =>
-        <div key={anecdote.id}>
-          <div>
-            {anecdote.content}
-          </div>
-          <div>
-            has {anecdote.votes}
-            <button onClick={() => handleVote(anecdote)}>vote</button>
-          </div>
+
+      <Notification notification={notification}/>
+      <AnecdoteForm notificationDispatch={notificationDispatch}/>
+
+    {anecdotes.map(anecdote =>
+      <div key={anecdote.id}>
+        <div>
+          {anecdote.content}
         </div>
-      )}
+        <div>
+          has {anecdote.votes}
+          <button onClick={() => handleVote(anecdote)}>vote</button>
+        </div>
+      </div>
+    )}
     </div>
+
+    </NotificationContext.Provider>
+
   )
 }
 
