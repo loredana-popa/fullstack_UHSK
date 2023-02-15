@@ -11,6 +11,12 @@ const AnecdoteForm = () => {
   const newAnecdoteMutation = useMutation(createAnecdote, {
     onSuccess: () => {
       queryClient.invalidateQueries('anecdotes')
+    },
+    onError: (err) => {
+      return notificationDispatch({
+        type: 'ERROR',
+        payload: err.response.data.error
+      })
     }
   })
 

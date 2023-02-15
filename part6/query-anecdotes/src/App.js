@@ -11,6 +11,8 @@ const notificationReducer = (state, action) => {
       return state = action.payload
     case "VOTED":
       return state = action.payload
+    case "ERROR":
+      return state = action.payload
     case "HIDE":
       return state = ''
     default:
