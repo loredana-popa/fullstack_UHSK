@@ -1,17 +1,21 @@
-import { useParams } from "react-router-dom"
+import { useMatch } from "react-router-dom"
 
 const Anecdote = ({ anecdotes }) => {
-    const id = useParams().id
-    const anecdote = anecdotes.find(a => a.id = Number(id))
 
-    return (
-        <div>
-            <h2>{anecdote.content} by {anecdote.author}</h2> 
-            <div>has {anecdote.votes} votes</div>
-            <div>for more info see: 
-                <a href={anecdote.info}> {anecdote.info} </a>
-            </div>
-        </div>
+  const match = useMatch('/anecdotes/:id')
+
+  const anecdote = match
+    ? anecdotes.find(anecdote => anecdote.id === Number(match.params.id))
+    : null
+
+  return (
+    <div>
+      <h2>{anecdote.content} by {anecdote.author}</h2> 
+      <div>has {anecdote.votes} votes</div>
+      <div>for more info see: 
+        <a href={anecdote.info}> {anecdote.info} </a>
+      </div>
+    </div>
 
     )
 
