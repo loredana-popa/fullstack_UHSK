@@ -4,6 +4,7 @@ import Menu from './components/Menu'
 import About from './components/About'
 import Footer from './components/Footer'
 import AnecdoteList from './components/AnecdoteList'
+import Anecdote from './components/Anecdote'
 
 
 const CreateNew = (props) => {
@@ -89,9 +90,10 @@ const App = () => {
       
       <h1>Software anecdotes</h1>
       <Menu />
-      
+
       <Routes>
-        <Route path="/" element={<AnecdoteList anecdotes={anecdotes} />} />
+      <Route path="/" element={<AnecdoteList anecdotes={anecdotes} />} />
+        <Route path="/anecdotes/:id" element={<Anecdote anecdotes={anecdotes} />}></Route>
         <Route path="/anecdotes" element={<AnecdoteList anecdotes={anecdotes} />} />
         <Route path="/about" element={<About />} />
         <Route path="/create" element={<CreateNew />} />
