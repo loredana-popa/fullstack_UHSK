@@ -3,10 +3,10 @@ import {
   Routes, 
   Route, 
   Navigate, 
-  // useMatch 
 } from 'react-router-dom'
 
-// import Home from './components/Home'
+import { useField } from './hooks'
+
 import Menu from './components/Menu'
 import About from './components/About'
 import Footer from './components/Footer'
@@ -14,16 +14,17 @@ import AnecdoteList from './components/AnecdoteList'
 import Anecdote from './components/Anecdote'
 
 const CreateNew = (props) => {
-  const [content, setContent] = useState('')
-  const [author, setAuthor] = useState('')
-  const [info, setInfo] = useState('')
+  const content = useField('text')
+  const author = useField('text')
+  const info = useField('text')
 
   const handleSubmit = (e) => {
     e.preventDefault()
+
     props.addNew({
-      content,
-      author,
-      info,
+      content : content.value,
+      author : author.value,
+      info : info.value,
       votes: 0
     })
   }
@@ -34,23 +35,25 @@ const CreateNew = (props) => {
       <form onSubmit={handleSubmit}>
         <div>
           content
-          <input name='content' value={content} onChange={(e) => setContent(e.target.value)} />
+          <input {...content} />
         </div>
+
         <div>
           author
-          <input name='author' value={author} onChange={(e) => setAuthor(e.target.value)} />
+          <input {...author}/>
         </div>
+
         <div>
           url for more info
-          <input name='info' value={info} onChange={(e)=> setInfo(e.target.value)} />
+          <input {...info} />
         </div>
+
         <button>create</button>
       </form>
     </div>
   )
 
 }
-
 
 const Notification = ({ notification }) => {
 
@@ -77,18 +80,19 @@ const App = () => {
 
   const [notification, setNotification] = useState('')
   const [isCreated, setIsCreated] = useState(false)
-  // const match = useMatch('/anecdotes/:id')
-
-  // const anecdote = match
-  // ? anecdotes.find(anecdote => anecdote.id === Number(match.params.id))
-  // : null
 
   const addNew = (anecdote) => {
     anecdote.id = Math.round(Math.random() * 10000)
     setAnecdotes(anecdotes.concat(anecdote))
-    setIsCreated(!isCreated)
+    setIsCreated(true)
     setNotification(`a new anecdote: ${anecdote.content} was created!`)
+
     setTimeout(() => {
+      setIsCreated(false)
+    }, 1000)
+    
+    setTimeout(() => {
+      setIsCreated(false)
       setNotification('')
     }, 5000)
   }
@@ -126,7 +130,6 @@ const App = () => {
       <Footer />
     </div>
 
- 
   )
 }
 
