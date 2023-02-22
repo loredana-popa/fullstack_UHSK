@@ -5,55 +5,12 @@ import {
   Navigate, 
 } from 'react-router-dom'
 
-import { useField } from './hooks'
-
 import Menu from './components/Menu'
 import About from './components/About'
 import Footer from './components/Footer'
 import AnecdoteList from './components/AnecdoteList'
 import Anecdote from './components/Anecdote'
-
-const CreateNew = (props) => {
-  const content = useField('text')
-  const author = useField('text')
-  const info = useField('text')
-
-  const handleSubmit = (e) => {
-    e.preventDefault()
-
-    props.addNew({
-      content : content.value,
-      author : author.value,
-      info : info.value,
-      votes: 0
-    })
-  }
-
-  return (
-    <div>
-      <h2>create a new anecdote</h2>
-      <form onSubmit={handleSubmit}>
-        <div>
-          content
-          <input {...content} />
-        </div>
-
-        <div>
-          author
-          <input {...author}/>
-        </div>
-
-        <div>
-          url for more info
-          <input {...info} />
-        </div>
-
-        <button>create</button>
-      </form>
-    </div>
-  )
-
-}
+import AnecdoteForm from './components/AnecdoteForm'
 
 const Notification = ({ notification }) => {
 
@@ -90,7 +47,7 @@ const App = () => {
     setTimeout(() => {
       setIsCreated(false)
     }, 1000)
-    
+
     setTimeout(() => {
       setIsCreated(false)
       setNotification('')
@@ -122,7 +79,7 @@ const App = () => {
         <Route path="/anecdotes/:id" element={<Anecdote anecdotes={anecdotes} />} />
         <Route path="/anecdotes" element={<AnecdoteList anecdotes={anecdotes} />} />
         <Route path="/about" element={<About />} />
-        <Route path="/create" element={isCreated ? <Navigate replace to="/" /> : <CreateNew addNew={addNew}/>} />
+        <Route path="/create" element={isCreated ? <Navigate replace to="/" /> : <AnecdoteForm addNew={addNew}/>} />
         <Route path="/" element={<AnecdoteList anecdotes={anecdotes} />} />
 
       </Routes>
