@@ -18,13 +18,28 @@ const useField = (type) => {
 const useResource = (baseUrl) => {
   const [resources, setResources] = useState([])
 
-  // ...
+  // let token = null
 
-  const create = (resource) => {
-    // ...
+  // const setToken = newToken => {
+  //   token = `bearer ${newToken}`
+  // }
+
+  const getAll = async () => {
+    const response = await axios.get(baseUrl)
+    setResources(response.data) 
+  }
+
+  const create = async newObject => {
+    // const config = {
+    //   headers: { Authorization: token },
+    // }
+  
+    const response = await axios.post(baseUrl, newObject )
+    setResources(resources.concat(response.data))
   }
 
   const service = {
+    getAll,
     create
   }
 
@@ -40,6 +55,11 @@ const App = () => {
 
   const [notes, noteService] = useResource('http://localhost:3005/notes')
   const [persons, personService] = useResource('http://localhost:3005/persons')
+
+  useEffect(() => {
+    noteService.getAll()
+    personService.getAll()
+  },[])
 
   const handleNoteSubmit = (event) => {
     event.preventDefault()
@@ -58,6 +78,7 @@ const App = () => {
         <input {...content} />
         <button>create</button>
       </form>
+
       {notes.map(n => <p key={n.id}>{n.content}</p>)}
 
       <h2>persons</h2>
@@ -66,6 +87,7 @@ const App = () => {
         number <input {...number} />
         <button>create</button>
       </form>
+
       {persons.map(n => <p key={n.id}>{n.name} {n.number}</p>)}
     </div>
   )
