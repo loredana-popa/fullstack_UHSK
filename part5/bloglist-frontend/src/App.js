@@ -1,9 +1,10 @@
 import { useState, useEffect, useRef } from 'react'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import {
-  showNotification,
-  hideNotification,
+	showNotification,
+	hideNotification,
 } from './reducers/notificationReducer'
+import { setBlogs, createBlog } from './reducers/blogReducer'
 
 import Blog from './components/Blog'
 import Notification from './components/Notification'
@@ -14,196 +15,193 @@ import blogService from './services/blogs'
 import loginServices from './services/login'
 
 const App = () => {
-  const [blogs, setBlogs] = useState([])
-  const [username, setUsername] = useState('')
-  const [password, setPassword] = useState('')
-  const [user, setUser] = useState(null)
-  const blogFormRef = useRef()
-  const dispatch = useDispatch()
+	const [username, setUsername] = useState('')
+	const [password, setPassword] = useState('')
+	const [user, setUser] = useState(null)
+	const blogFormRef = useRef()
+	const dispatch = useDispatch()
+	const blogs = useSelector(state => state.blogs)
+	console.log(blogs)
 
-  useEffect(() => {
-    console.log('app rendered')
-    blogService.getAll().then((blogs) =>
-      setBlogs(
-        blogs.sort((a, b) => {
-          return b.likes - a.likes
-        })
-      )
-    )
-  }, [])
+	// fetch data from backend
+	useEffect(() => {
+		console.log('app rendered')
+		blogService.getAll().then(blogs => dispatch(setBlogs(blogs)))
+	}, [])
 
-  useEffect(() => {
-    const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')
+	useEffect(() => {
+		const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')
 
-    if (loggedUserJSON) {
-      const user = JSON.parse(loggedUserJSON)
-      setUser(user)
-      blogService.setToken(user.accessToken)
-    }
-  }, [])
+		if (loggedUserJSON) {
+			const user = JSON.parse(loggedUserJSON)
+			setUser(user)
+			blogService.setToken(user.accessToken)
+		}
+	}, [])
 
-  const handleLogin = async (event) => {
-    event.preventDefault()
+	const handleLogin = async event => {
+		event.preventDefault()
 
-    try {
-      const user = await loginServices.login({
-        username,
-        password,
-      })
+		try {
+			const user = await loginServices.login({
+				username,
+				password,
+			})
 
-      window.localStorage.setItem('loggedBlogappUser', JSON.stringify(user))
-      blogService.setToken(user.accessToken)
-      setUser(user)
+			window.localStorage.setItem('loggedBlogappUser', JSON.stringify(user))
+			blogService.setToken(user.accessToken)
+			setUser(user)
 
-      //clear all input values in the form
-      setUsername('')
-      setPassword('')
-    } catch (exception) {
-      dispatch(showNotification('ERR_Wrong credentials')),
-        setTimeout(() => {
-          dispatch(hideNotification())
-          setUsername('')
-          setPassword('')
-        }, 5000)
-    }
-  }
+			//clear all input values in the form
+			setUsername('')
+			setPassword('')
+		} catch (exception) {
+			dispatch(showNotification('ERR_Wrong credentials')),
+				setTimeout(() => {
+					dispatch(hideNotification())
+					setUsername('')
+					setPassword('')
+				}, 5000)
+		}
+	}
 
-  const handleLogout = () => {
-    window.localStorage.removeItem('loggedBlogappUser')
-    console.log('user is logged out')
-    setUser(null)
-  }
+	const handleLogout = () => {
+		window.localStorage.removeItem('loggedBlogappUser')
+		console.log('user is logged out')
+		setUser(null)
+	}
 
-  const addBlog = (blogObject) => {
-    blogFormRef.current.toggleVisibility()
-    blogService
-      .create(blogObject)
-      .then((returnedBlog) => {
-        setBlogs(blogs.concat(returnedBlog))
-        dispatch(
-          showNotification(
-            `NEW_a new blog: ${blogObject.title} by ${blogObject.author} added`
-          )
-        ),
-          setTimeout(() => {
-            dispatch(hideNotification())
-          }, 5000)
-      })
+	const addBlog = blogObject => {
+		blogFormRef.current.toggleVisibility()
+		blogService
+			.create(blogObject)
+			.then(returnedBlog => {
+				dispatch(createBlog(returnedBlog))
+				dispatch(
+					showNotification(
+						`NEW_a new blog: ${blogObject.title} by ${blogObject.author} added`
+					)
+				),
+					setTimeout(() => {
+						dispatch(hideNotification())
+					}, 5000)
+			})
 
-      .catch(
-        (error) =>
-          dispatch(showNotification(`ERR_${error.response.data.error}`)),
-        setTimeout(() => {
-          dispatch(hideNotification())
-        }, 5000)
-      )
-  }
+			.catch(
+				error => dispatch(showNotification(`ERR_${error.response.data.error}`)),
+				setTimeout(() => {
+					dispatch(hideNotification())
+				}, 5000)
+			)
+	}
 
-  const updateBlog = (id, blogObject) => {
-    const changedBlog = { ...blogObject }
+	const updateBlog = (id, blogObject) => {
+		const changedBlog = { ...blogObject }
 
-    blogService
-      .update(id, changedBlog)
-      .then(
-        () =>
-          setBlogs(blogs.map((blog) => (blog.id !== id ? blog : changedBlog))),
-        dispatch(
-          showNotification(
-            `UPD_you liked: ${changedBlog.title} by ${changedBlog.author}`
-          )
-        ),
+		blogService
+			.update(id, changedBlog)
+			.then(
+				() =>
+					dispatch(
+						setBlogs(blogs.map(blog => (blog.id !== id ? blog : changedBlog)))
+					),
+				dispatch(
+					showNotification(
+						`UPD_you liked: ${changedBlog.title} by ${changedBlog.author}`
+					)
+				),
 
-        setTimeout(() => {
-          dispatch(hideNotification())
-        }, 5000)
-      )
-      .catch((error) => {
-        dispatch(showNotification(`ERR_${error.response.data.error}`)),
-          setTimeout(() => {
-            dispatch(hideNotification())
-          }, 5000)
-      })
-  }
+				setTimeout(() => {
+					dispatch(hideNotification())
+				}, 5000)
+			)
+			.catch(error => {
+				dispatch(showNotification(`ERR_${error.response.data.error}`)),
+					setTimeout(() => {
+						dispatch(hideNotification())
+					}, 5000)
+			})
+	}
 
-  const deleteBlog = (id, blogObject) => {
-    const blogToDelete = { ...blogObject }
+	const deleteBlog = (id, blogObject) => {
+		const blogToDelete = { ...blogObject }
 
-    blogService
-      .remove(id, blogToDelete)
-      .then(() => setBlogs(blogs.filter((blog) => blog.id !== id)))
-      .catch((error) => {
-        dispatch(showNotification(`ERR_${error.response.data.error}`)),
-          setTimeout(() => {
-            dispatch(hideNotification())
-          }, 5000)
-      })
-  }
+		blogService
+			.remove(id, blogToDelete)
+			.then(() => dispatch(setBlogs(blogs.filter(blog => blog.id !== id))))
 
-  if (user === null) {
-    return (
-      <div>
-        <Notification />
+			.catch(error => {
+				dispatch(showNotification(`ERR_${error.response.data.error}`)),
+					setTimeout(() => {
+						dispatch(hideNotification())
+					}, 5000)
+			})
+	}
 
-        <h2>Log in to application</h2>
+	if (user === null) {
+		return (
+			<div>
+				<Notification />
 
-        <form onSubmit={handleLogin}>
-          <div>
-            username
-            <input
-              id='username'
-              type='text'
-              value={username}
-              name='Username'
-              onChange={(event) => setUsername(event.target.value)}
-            />
-          </div>
+				<h2>Log in to application</h2>
 
-          <div>
-            password
-            <input
-              id='password'
-              type='password'
-              value={password}
-              name='Password'
-              onChange={(event) => setPassword(event.target.value)}
-            />
-          </div>
+				<form onSubmit={handleLogin}>
+					<div>
+						username
+						<input
+							id='username'
+							type='text'
+							value={username}
+							name='Username'
+							onChange={event => setUsername(event.target.value)}
+						/>
+					</div>
 
-          <button id='login-button' type='submit'>
-            login
-          </button>
-        </form>
-      </div>
-    )
-  }
+					<div>
+						password
+						<input
+							id='password'
+							type='password'
+							value={password}
+							name='Password'
+							onChange={event => setPassword(event.target.value)}
+						/>
+					</div>
 
-  return (
-    <div>
-      <h2>blogs</h2>
+					<button id='login-button' type='submit'>
+						login
+					</button>
+				</form>
+			</div>
+		)
+	}
 
-      {/* <Notification message={message} /> */}
-      <Notification />
+	return (
+		<div>
+			<h2>blogs</h2>
 
-      <p>
-        {user.name} logged in
-        <button onClick={handleLogout}>logout</button>
-      </p>
+			<Notification />
 
-      <Togglable ref={blogFormRef}>
-        <BlogForm createBlog={addBlog} />
-      </Togglable>
+			<p>
+				{user.name} logged in
+				<button onClick={handleLogout}>logout</button>
+			</p>
 
-      {blogs.map((blog, i) => (
-        <Blog
-          key={i}
-          blog={blog}
-          updateBlog={updateBlog}
-          deleteBlog={deleteBlog}
-          loggedUser={user.username}
-        />
-      ))}
-    </div>
-  )
+			<Togglable ref={blogFormRef}>
+				<BlogForm createBlog={addBlog} />
+			</Togglable>
+
+			{blogs.map((blog, i) => (
+				<Blog
+					key={i}
+					blog={blog}
+					updateBlog={updateBlog}
+					deleteBlog={deleteBlog}
+					user={user}
+				/>
+			))}
+		</div>
+	)
 }
 
 export default App

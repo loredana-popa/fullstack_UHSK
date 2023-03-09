@@ -9,13 +9,15 @@ const notificationSlice = createSlice({
 	initialState,
 	reducers: {
 		hideNotification(state) {
-			return (state = { ...initialState })
+			state = { ...initialState }
+			return state
 		},
 
 		showNotification(state, action) {
 			const content = action.payload
 			const substr = content.substring(0, 4)
 			const message = content.substring(4)
+
 			switch (substr) {
 				case 'NEW_':
 					return (state = {
