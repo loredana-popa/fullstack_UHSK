@@ -21,15 +21,16 @@ const App = () => {
 	const blogFormRef = useRef()
 	const dispatch = useDispatch()
 	const blogs = useSelector(state => state.blogs)
-	console.log(blogs)
+	console.log('initial blogs array', blogs)
 
 	// fetch data from backend
 	useEffect(() => {
-		console.log('app rendered')
+		// console.log('fetch data')
 		blogService.getAll().then(blogs => dispatch(setBlogs(blogs)))
-	}, [])
+	}, [blogs.length])
 
 	useEffect(() => {
+		// console.log('get user loggin info')
 		const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')
 
 		if (loggedUserJSON) {
@@ -40,6 +41,7 @@ const App = () => {
 	}, [])
 
 	const handleLogin = async event => {
+		// console.log('save user loggin info to local storage')
 		event.preventDefault()
 
 		try {
@@ -72,6 +74,7 @@ const App = () => {
 	}
 
 	const addBlog = blogObject => {
+		// console.log('hide blog form after creating a blog')
 		blogFormRef.current.toggleVisibility()
 		blogService
 			.create(blogObject)

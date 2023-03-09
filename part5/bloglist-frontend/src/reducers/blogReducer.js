@@ -6,27 +6,19 @@ const blogSlice = createSlice({
 	name: 'blog',
 	initialState,
 	reducers: {
-		// create a blog object
+		// create a blog object and add it to the state array
 		createBlog(state, action) {
-			const content = action.payload
-			console.log(content)
-			state.push({
-				title: content.title,
-				author: content.author,
-				url: content.url,
-				likes: content.likes,
-				user: content.user,
-			})
-		},
-		// add the new created blog to the state array
-		appendBlog(state, action) {
 			state.push(action.payload)
 		},
-		//
+		// // add the new created blog to the state array
+		// appendBlog(state, action) {
+		// 	state.push(action.payload)
+		// },
+		// replace the state array with a new one
 		setBlogs(state, action) {
 			return action.payload
 		},
 	},
 })
-export const { createBlog, appendBlog, setBlogs } = blogSlice.actions
+export const { createBlog, setBlogs } = blogSlice.actions
 export default blogSlice.reducer
