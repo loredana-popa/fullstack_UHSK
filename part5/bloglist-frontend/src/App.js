@@ -5,6 +5,7 @@ import {
 	hideNotification,
 } from './reducers/notificationReducer'
 import { setBlogs, createBlog } from './reducers/blogReducer'
+import { loginUser, logoutUser } from './reducers/logginReducer'
 
 import Blog from './components/Blog'
 import Notification from './components/Notification'
@@ -17,31 +18,31 @@ import loginServices from './services/login'
 const App = () => {
 	const [username, setUsername] = useState('')
 	const [password, setPassword] = useState('')
-	const [user, setUser] = useState(null)
 	const blogFormRef = useRef()
+
 	const dispatch = useDispatch()
 	const blogs = useSelector(state => state.blogs)
-	console.log('initial blogs array', blogs)
+	const user = useSelector(state => state.login)
+	// console.log('logged user is', user)
+	// console.log('initial blogs , array', blogs)
 
 	// fetch data from backend
 	useEffect(() => {
-		// console.log('fetch data')
 		blogService.getAll().then(blogs => dispatch(setBlogs(blogs)))
 	}, [blogs.length])
 
 	useEffect(() => {
-		// console.log('get user loggin info')
 		const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')
 
 		if (loggedUserJSON) {
 			const user = JSON.parse(loggedUserJSON)
-			setUser(user)
+			dispatch(loginUser(user))
+
 			blogService.setToken(user.accessToken)
 		}
 	}, [])
 
 	const handleLogin = async event => {
-		// console.log('save user loggin info to local storage')
 		event.preventDefault()
 
 		try {
@@ -52,7 +53,7 @@ const App = () => {
 
 			window.localStorage.setItem('loggedBlogappUser', JSON.stringify(user))
 			blogService.setToken(user.accessToken)
-			setUser(user)
+			dispatch(loginUser({ ...user }))
 
 			//clear all input values in the form
 			setUsername('')
@@ -70,7 +71,7 @@ const App = () => {
 	const handleLogout = () => {
 		window.localStorage.removeItem('loggedBlogappUser')
 		console.log('user is logged out')
-		setUser(null)
+		dispatch(logoutUser())
 	}
 
 	const addBlog = blogObject => {
