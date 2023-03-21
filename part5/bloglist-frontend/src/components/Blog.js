@@ -1,32 +1,28 @@
 import { useState } from 'react'
+import { useParams } from 'react-router-dom'
 // import PropTypes from 'prop-types'
 
-const Blog = ({ blog, updateBlog, deleteBlog, user }) => {
-	const [showDetails, setShowDetails] = useState(false)
-	const [buttonLable, setButtonLable] = useState('view details')
+const Blog = ({ blogs, updateBlog, deleteBlog, user }) => {
+	const id = useParams().id
+	const blog = blogs.find(b => b.id === id)
+	console.log('selected blog is', blog)
+
 	const [newBlog, setNewBlog] = useState({ ...blog })
-	console.log('logged user is', user)
+
+	const blogCreator = !blog ? null : blog.user.username
 	const loggedUser = !user ? null : user.username
 
-	const blogStyle = {
-		paddingTop: 10,
-		paddingLeft: 2,
-		border: 'solid',
-		borderWidth: 1,
-		marginBottom: 5,
-	}
-	const detailsStyle = showDetails ? { display: '' } : { display: 'none' }
-
-	const toggleViewDetails = () => {
-		setShowDetails(!showDetails)
-		showDetails ? setButtonLable('view') : setButtonLable('hide')
-	}
+	// const blogStyle = {
+	// 	paddingTop: 10,
+	// 	paddingLeft: 2,
+	// 	border: 'solid',
+	// 	borderWidth: 1,
+	// 	marginBottom: 5,
+	// }
 
 	// show delete button only for blogs created by the logged in user
 	const showDeleteButton =
-		loggedUser === blog.user.username
-			? { display: 'block' }
-			: { display: 'none' }
+		loggedUser === blogCreator ? { display: 'block' } : { display: 'none' }
 
 	const incrementLikes = e => {
 		e.preventDefault()
@@ -44,24 +40,21 @@ const Blog = ({ blog, updateBlog, deleteBlog, user }) => {
 			deleteBlog(elId, newBlog)
 		}
 	}
-
+	if (!blog) {
+		return null
+	}
 	return (
-		<div style={blogStyle} className='blog' id={blog.id}>
-			<div className='blog-summary'>
+		<div className='blog' id={blog.id}>
+			<h2 className='blog-summary'>
 				{blog.title} {blog.author}
-				<button onClick={toggleViewDetails} className='view-btn'>
-					{buttonLable}
-				</button>
-			</div>
+			</h2>
 
-			<div style={detailsStyle} className='blog-details'>
-				<div className='url-details'> {blog.url}</div>
-				<div className='likes-details'>
-					likes: {blog.likes}
-					<button onClick={incrementLikes} className='like-btn'>
-						like
-					</button>
-				</div>
+			<div className='url-details'> {blog.url}</div>
+			<div className='likes-details'>
+				{blog.likes} likes
+				<button onClick={incrementLikes} className='like-btn'>
+					like
+				</button>
 				<div data-testid='author' className='author-details'>
 					{blog.author}
 				</div>

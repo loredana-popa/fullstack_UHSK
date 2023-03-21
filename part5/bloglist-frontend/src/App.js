@@ -168,6 +168,25 @@ const App = () => {
 		)
 	}
 
+	const Blogs = ({ blogs }) => {
+		const style = {
+			paddingTop: 10,
+			paddingLeft: 2,
+			border: 'solid',
+			borderWidth: 1,
+			marginBottom: 5,
+		}
+		return (
+			<div>
+				{blogs.map(blog => (
+					<div key={blog.id} style={style}>
+						<Link to={`/blogs/${blog.id}`}>{blog.title}</Link>
+					</div>
+				))}
+			</div>
+		)
+	}
+
 	if (user === null) {
 		return (
 			<div>
@@ -235,21 +254,18 @@ const App = () => {
 			<Routes>
 				<Route path='/users/:id' element={<User users={users} />} />
 				<Route path='/users' element={<Users />} />
-				<Route path='/blogs/:id' element={<Blog blogs={blogs} />} />
 				<Route
-					path='/'
-					element={blogs.map((blog, i) => (
-						<Link to={`/blogs/${blog.id}`} key={blog.id}>
-							<Blog
-								key={i}
-								blog={blog}
-								updateBlog={updateBlog}
-								deleteBlog={deleteBlog}
-								user={user}
-							/>
-						</Link>
-					))}
+					path='/blogs/:id'
+					element={
+						<Blog
+							blogs={blogs}
+							updateBlog={updateBlog}
+							deleteBlog={deleteBlog}
+						/>
+					}
 				/>
+				<Route path='/blogs' element={<Blogs blogs={blogs} />} />
+				<Route path='/' element={<Blogs blogs={blogs} />} />
 			</Routes>
 		</Router>
 	)
