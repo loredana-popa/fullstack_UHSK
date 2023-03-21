@@ -5,7 +5,8 @@ const Blog = ({ blog, updateBlog, deleteBlog, user }) => {
 	const [showDetails, setShowDetails] = useState(false)
 	const [buttonLable, setButtonLable] = useState('view details')
 	const [newBlog, setNewBlog] = useState({ ...blog })
-	const loggedUser = user.username
+	console.log('logged user is', user)
+	const loggedUser = !user ? null : user.username
 
 	const blogStyle = {
 		paddingTop: 10,

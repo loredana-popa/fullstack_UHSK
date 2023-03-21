@@ -1,16 +1,19 @@
+import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom'
 import { useState, useEffect, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import {
 	showNotification,
 	hideNotification,
 } from './reducers/notificationReducer'
-import { setBlogs, createBlog } from './reducers/blogReducer'
+import { setBlogs, createBlog, initializeBlogs } from './reducers/blogReducer'
 import { loginUser, logoutUser } from './reducers/logginReducer'
+import { initializeUsers } from './reducers/userReducer'
 
 import Blog from './components/Blog'
 import Notification from './components/Notification'
 import BlogForm from './components/blogForm'
 import Togglable from './components/Togglable'
+import User from './components/User'
 
 import blogService from './services/blogs'
 import loginServices from './services/login'
@@ -23,14 +26,15 @@ const App = () => {
 	const dispatch = useDispatch()
 	const blogs = useSelector(state => state.blogs)
 	const user = useSelector(state => state.login)
-	// console.log('logged user is', user)
-	// console.log('initial blogs , array', blogs)
+	const users = useSelector(state => state.users)
+	console.log('users arr is', users)
 
-	// fetch data from backend
+	// fetch data about blogs from backend
 	useEffect(() => {
-		blogService.getAll().then(blogs => dispatch(setBlogs(blogs)))
+		dispatch(initializeBlogs())
 	}, [blogs.length])
 
+	// fetch user info when logged in
 	useEffect(() => {
 		const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')
 
@@ -40,6 +44,11 @@ const App = () => {
 
 			blogService.setToken(user.accessToken)
 		}
+	}, [])
+
+	// fetch data about users from backend
+	useEffect(() => {
+		dispatch(initializeUsers())
 	}, [])
 
 	const handleLogin = async event => {
@@ -53,7 +62,7 @@ const App = () => {
 
 			window.localStorage.setItem('loggedBlogappUser', JSON.stringify(user))
 			blogService.setToken(user.accessToken)
-			dispatch(loginUser({ ...user }))
+			dispatch(loginUser(user))
 
 			//clear all input values in the form
 			setUsername('')
@@ -142,6 +151,23 @@ const App = () => {
 			})
 	}
 
+	const Users = () => {
+		return (
+			<div>
+				<h1>Users</h1>
+				<ul>
+					{users.map(user => (
+						<li key={user.id}>
+							<Link to={`/users/${user.id}`}>
+								{user.name} {user.blogs.length}
+							</Link>
+						</li>
+					))}
+				</ul>
+			</div>
+		)
+	}
+
 	if (user === null) {
 		return (
 			<div>
@@ -180,8 +206,19 @@ const App = () => {
 		)
 	}
 
+	const padding = {
+		padding: 5,
+	}
 	return (
-		<div>
+		<Router>
+			<div>
+				<Link style={padding} to='/blogs'>
+					blogs
+				</Link>
+				<Link style={padding} to='/users'>
+					users
+				</Link>
+			</div>
 			<h2>blogs</h2>
 
 			<Notification />
@@ -195,16 +232,26 @@ const App = () => {
 				<BlogForm createBlog={addBlog} />
 			</Togglable>
 
-			{blogs.map((blog, i) => (
-				<Blog
-					key={i}
-					blog={blog}
-					updateBlog={updateBlog}
-					deleteBlog={deleteBlog}
-					user={user}
+			<Routes>
+				<Route path='/users/:id' element={<User users={users} />} />
+				<Route path='/users' element={<Users />} />
+				<Route path='/blogs/:id' element={<Blog blogs={blogs} />} />
+				<Route
+					path='/'
+					element={blogs.map((blog, i) => (
+						<Link to={`/blogs/${blog.id}`} key={blog.id}>
+							<Blog
+								key={i}
+								blog={blog}
+								updateBlog={updateBlog}
+								deleteBlog={deleteBlog}
+								user={user}
+							/>
+						</Link>
+					))}
 				/>
-			))}
-		</div>
+			</Routes>
+		</Router>
 	)
 }
 

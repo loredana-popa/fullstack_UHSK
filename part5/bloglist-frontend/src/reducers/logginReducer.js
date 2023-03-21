@@ -17,4 +17,5 @@ const loginSlice = createSlice({
 })
 
 export const { loginUser, logoutUser } = loginSlice.actions
+
 export default loginSlice.reducer
