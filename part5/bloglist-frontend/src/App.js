@@ -10,10 +10,12 @@ import { loginUser, logoutUser } from './reducers/logginReducer'
 import { initializeUsers } from './reducers/userReducer'
 
 import Blog from './components/Blog'
+import Blogs from './components/Blogs'
 import Notification from './components/Notification'
 import BlogForm from './components/blogForm'
 import Togglable from './components/Togglable'
 import User from './components/User'
+import Users from './components/Users'
 
 import blogService from './services/blogs'
 import loginServices from './services/login'
@@ -27,7 +29,6 @@ const App = () => {
 	const blogs = useSelector(state => state.blogs)
 	const user = useSelector(state => state.login)
 	const users = useSelector(state => state.users)
-	console.log('users arr is', users)
 
 	// fetch data about blogs from backend
 	useEffect(() => {
@@ -151,42 +152,6 @@ const App = () => {
 			})
 	}
 
-	const Users = () => {
-		return (
-			<div>
-				<h1>Users</h1>
-				<ul>
-					{users.map(user => (
-						<li key={user.id}>
-							<Link to={`/users/${user.id}`}>
-								{user.name} {user.blogs.length}
-							</Link>
-						</li>
-					))}
-				</ul>
-			</div>
-		)
-	}
-
-	const Blogs = ({ blogs }) => {
-		const style = {
-			paddingTop: 10,
-			paddingLeft: 2,
-			border: 'solid',
-			borderWidth: 1,
-			marginBottom: 5,
-		}
-		return (
-			<div>
-				{blogs.map(blog => (
-					<div key={blog.id} style={style}>
-						<Link to={`/blogs/${blog.id}`}>{blog.title}</Link>
-					</div>
-				))}
-			</div>
-		)
-	}
-
 	if (user === null) {
 		return (
 			<div>
@@ -237,15 +202,14 @@ const App = () => {
 				<Link style={padding} to='/users'>
 					users
 				</Link>
+				<em>
+					{user.name} logged in
+					<button onClick={handleLogout}>logout</button>
+				</em>
 			</div>
 			<h2>blogs</h2>
 
 			<Notification />
-
-			<p>
-				{user.name} logged in
-				<button onClick={handleLogout}>logout</button>
-			</p>
 
 			<Togglable ref={blogFormRef}>
 				<BlogForm createBlog={addBlog} />
@@ -253,7 +217,7 @@ const App = () => {
 
 			<Routes>
 				<Route path='/users/:id' element={<User users={users} />} />
-				<Route path='/users' element={<Users />} />
+				<Route path='/users' element={<Users users={users} />} />
 				<Route
 					path='/blogs/:id'
 					element={

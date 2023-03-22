@@ -5,20 +5,11 @@ import { useParams } from 'react-router-dom'
 const Blog = ({ blogs, updateBlog, deleteBlog, user }) => {
 	const id = useParams().id
 	const blog = blogs.find(b => b.id === id)
-	console.log('selected blog is', blog)
 
 	const [newBlog, setNewBlog] = useState({ ...blog })
 
 	const blogCreator = !blog ? null : blog.user.username
 	const loggedUser = !user ? null : user.username
-
-	// const blogStyle = {
-	// 	paddingTop: 10,
-	// 	paddingLeft: 2,
-	// 	border: 'solid',
-	// 	borderWidth: 1,
-	// 	marginBottom: 5,
-	// }
 
 	// show delete button only for blogs created by the logged in user
 	const showDeleteButton =
@@ -40,9 +31,11 @@ const Blog = ({ blogs, updateBlog, deleteBlog, user }) => {
 			deleteBlog(elId, newBlog)
 		}
 	}
+
 	if (!blog) {
 		return null
 	}
+
 	return (
 		<div className='blog' id={blog.id}>
 			<h2 className='blog-summary'>
