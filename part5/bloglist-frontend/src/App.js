@@ -239,6 +239,7 @@ const App = () => {
 					element={
 						<Blog
 							blogs={blogs}
+							user={user}
 							updateBlog={updateBlog}
 							deleteBlog={deleteBlog}
 							addComment={addComment}

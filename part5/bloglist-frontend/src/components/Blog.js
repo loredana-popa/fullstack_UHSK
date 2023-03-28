@@ -11,6 +11,7 @@ const Blog = ({ blogs, updateBlog, deleteBlog, user, addComment }) => {
 
 	const blogCreator = !blog ? null : blog.user.username
 	const loggedUser = !user ? null : user.username
+	// console.log('logged user:', loggedUser, 'blog user:', blogCreator)
 
 	// show delete button only for blogs created by the logged in user
 	const showDeleteButton =
