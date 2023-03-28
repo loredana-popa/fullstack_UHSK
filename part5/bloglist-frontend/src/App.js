@@ -50,6 +50,15 @@ const App = () => {
 		dispatch(initializeUsers())
 	}, [])
 
+	const handleMessageDisplay = message => {
+		// save notification
+		dispatch(showNotification(message))
+		// reset notification
+		setTimeout(() => {
+			dispatch(hideNotification())
+		}, 5000)
+	}
+
 	const handleLogout = () => {
 		window.localStorage.removeItem('loggedBlogappUser')
 		console.log('user is logged out')
@@ -63,22 +72,12 @@ const App = () => {
 			.create(blogObject)
 			.then(returnedBlog => {
 				dispatch(createBlog(returnedBlog))
-				dispatch(
-					showNotification(
-						`NEW_a new blog: ${blogObject.title} by ${blogObject.author} added`
-					)
-				),
-					setTimeout(() => {
-						dispatch(hideNotification())
-					}, 5000)
+				handleMessageDisplay(
+					`NEW_a new blog: ${blogObject.title} by ${blogObject.author} added`
+				)
 			})
 
-			.catch(
-				error => dispatch(showNotification(`ERR_${error.response.data.error}`)),
-				setTimeout(() => {
-					dispatch(hideNotification())
-				}, 5000)
-			)
+			.catch(error => handleMessageDisplay(`ERR_${error.response.data.error}`))
 	}
 
 	const updateBlog = (id, blogObject) => {
@@ -91,21 +90,13 @@ const App = () => {
 					dispatch(
 						setBlogs(blogs.map(blog => (blog.id !== id ? blog : changedBlog)))
 					),
-				dispatch(
-					showNotification(
-						`UPD_you liked: ${changedBlog.title} by ${changedBlog.author}`
-					)
-				),
 
-				setTimeout(() => {
-					dispatch(hideNotification())
-				}, 5000)
+				handleMessageDisplay(
+					`UPD_you liked: ${changedBlog.title} by ${changedBlog.author}`
+				)
 			)
 			.catch(error => {
-				dispatch(showNotification(`ERR_${error.response.data.error}`)),
-					setTimeout(() => {
-						dispatch(hideNotification())
-					}, 5000)
+				handleMessageDisplay(`ERR_${error.response.data.error}`)
 			})
 	}
 
@@ -117,10 +108,7 @@ const App = () => {
 			.then(() => dispatch(setBlogs(blogs.filter(blog => blog.id !== id))))
 
 			.catch(error => {
-				dispatch(showNotification(`ERR_${error.response.data.error}`)),
-					setTimeout(() => {
-						dispatch(hideNotification())
-					}, 5000)
+				handleMessageDisplay(`ERR_${error.response.data.error}`)
 			})
 	}
 
@@ -133,19 +121,18 @@ const App = () => {
 				)
 			)
 			.catch(error => {
-				dispatch(showNotification(`ERR_${error.response.data.error}`)),
-					setTimeout(() => {
-						dispatch(hideNotification())
-					}, 5000)
+				handleMessageDisplay(`ERR_${error.response.data.error}`)
 			})
 	}
 
 	if (user === null) {
 		return (
-			<div>
+			<Router>
 				<Notification />
-				<LoginForm />
-			</div>
+				<Routes>
+					<Route path='/' element={<LoginForm />} />
+				</Routes>
+			</Router>
 		)
 	}
 
@@ -161,11 +148,18 @@ const App = () => {
 				<Link style={padding} to='/users'>
 					users
 				</Link>
-				<em>
-					{user.name} logged in
-					<button onClick={handleLogout}>logout</button>
-				</em>
+				{user ? (
+					<em>
+						{user.name} logged in
+						<button onClick={handleLogout}>logout</button>
+					</em>
+				) : (
+					<Link style={padding} to='/login'>
+						login
+					</Link>
+				)}
 			</div>
+
 			<h2>blogs</h2>
 
 			<Notification />
@@ -190,6 +184,7 @@ const App = () => {
 					}
 				/>
 				<Route path='/blogs' element={<Blogs blogs={blogs} />} />
+				<Route path='/login' element={<LoginForm />}></Route>
 				<Route path='/' element={<Blogs blogs={blogs} />} />
 			</Routes>
 		</Router>
