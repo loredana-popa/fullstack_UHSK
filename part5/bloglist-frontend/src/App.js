@@ -152,6 +152,22 @@ const App = () => {
 			})
 	}
 
+	const addComment = (id, comment) => {
+		blogService
+			.createComment(id, comment)
+			.then(returnedBlog =>
+				dispatch(
+					setBlogs(blogs.map(blog => (blog.id !== id ? blog : returnedBlog)))
+				)
+			)
+			.catch(error => {
+				dispatch(showNotification(`ERR_${error.response.data.error}`)),
+					setTimeout(() => {
+						dispatch(hideNotification())
+					}, 5000)
+			})
+	}
+
 	if (user === null) {
 		return (
 			<div>
@@ -225,6 +241,7 @@ const App = () => {
 							blogs={blogs}
 							updateBlog={updateBlog}
 							deleteBlog={deleteBlog}
+							addComment={addComment}
 						/>
 					}
 				/>

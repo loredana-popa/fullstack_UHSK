@@ -1,8 +1,9 @@
 import { useState } from 'react'
 import { useParams } from 'react-router-dom'
+import CommentForm from './CommentForm'
 // import PropTypes from 'prop-types'
 
-const Blog = ({ blogs, updateBlog, deleteBlog, user }) => {
+const Blog = ({ blogs, updateBlog, deleteBlog, user, addComment }) => {
 	const id = useParams().id
 	const blog = blogs.find(b => b.id === id)
 
@@ -56,6 +57,17 @@ const Blog = ({ blogs, updateBlog, deleteBlog, user }) => {
 						remove
 					</button>
 				</div>
+				<h3>comments</h3>
+				<CommentForm
+					blog={blog}
+					updateBlog={updateBlog}
+					addComment={addComment}
+				/>
+				<ul>
+					{blog.comments.map((c, i) => (
+						<li key={i}>{c}</li>
+					))}
+				</ul>
 			</div>
 		</div>
 	)
