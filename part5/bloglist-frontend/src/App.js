@@ -1,5 +1,5 @@
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom'
-import { useState, useEffect, useRef } from 'react'
+import { useEffect, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import {
 	showNotification,
@@ -11,18 +11,16 @@ import { initializeUsers } from './reducers/userReducer'
 
 import Blog from './components/Blog'
 import Blogs from './components/Blogs'
-import Notification from './components/Notification'
 import BlogForm from './components/blogForm'
 import Togglable from './components/Togglable'
 import User from './components/User'
 import Users from './components/Users'
+import LoginForm from './components/LoginForm'
+import Notification from './components/Notification'
 
 import blogService from './services/blogs'
-import loginServices from './services/login'
 
 const App = () => {
-	const [username, setUsername] = useState('')
-	const [password, setPassword] = useState('')
 	const blogFormRef = useRef()
 
 	const dispatch = useDispatch()
@@ -51,32 +49,6 @@ const App = () => {
 	useEffect(() => {
 		dispatch(initializeUsers())
 	}, [])
-
-	const handleLogin = async event => {
-		event.preventDefault()
-
-		try {
-			const user = await loginServices.login({
-				username,
-				password,
-			})
-
-			window.localStorage.setItem('loggedBlogappUser', JSON.stringify(user))
-			blogService.setToken(user.accessToken)
-			dispatch(loginUser(user))
-
-			//clear all input values in the form
-			setUsername('')
-			setPassword('')
-		} catch (exception) {
-			dispatch(showNotification('ERR_Wrong credentials')),
-				setTimeout(() => {
-					dispatch(hideNotification())
-					setUsername('')
-					setPassword('')
-				}, 5000)
-		}
-	}
 
 	const handleLogout = () => {
 		window.localStorage.removeItem('loggedBlogappUser')
@@ -172,36 +144,7 @@ const App = () => {
 		return (
 			<div>
 				<Notification />
-
-				<h2>Log in to application</h2>
-
-				<form onSubmit={handleLogin}>
-					<div>
-						username
-						<input
-							id='username'
-							type='text'
-							value={username}
-							name='Username'
-							onChange={event => setUsername(event.target.value)}
-						/>
-					</div>
-
-					<div>
-						password
-						<input
-							id='password'
-							type='password'
-							value={password}
-							name='Password'
-							onChange={event => setPassword(event.target.value)}
-						/>
-					</div>
-
-					<button id='login-button' type='submit'>
-						login
-					</button>
-				</form>
+				<LoginForm />
 			</div>
 		)
 	}
