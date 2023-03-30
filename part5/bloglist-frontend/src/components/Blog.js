@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useParams } from 'react-router-dom'
 import CommentForm from './CommentForm'
+import { Navigate } from 'react-router-dom'
 // import PropTypes from 'prop-types'
 
 const Blog = ({ blogs, updateBlog, deleteBlog, user, addComment }) => {
@@ -35,7 +36,7 @@ const Blog = ({ blogs, updateBlog, deleteBlog, user, addComment }) => {
 	}
 
 	if (!blog) {
-		return null
+		return <Navigate replace to='/blogs' />
 	}
 
 	return (

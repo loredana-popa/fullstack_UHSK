@@ -1,4 +1,11 @@
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom'
+import {
+	BrowserRouter as Router,
+	Routes,
+	Route,
+	Link,
+	// useNavigate,
+	Navigate,
+} from 'react-router-dom'
 import { useEffect, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import {
@@ -9,6 +16,7 @@ import { setBlogs, createBlog, initializeBlogs } from './reducers/blogReducer'
 import { loginUser, logoutUser } from './reducers/logginReducer'
 import { initializeUsers } from './reducers/userReducer'
 
+import Home from './components/Home'
 import Blog from './components/Blog'
 import Blogs from './components/Blogs'
 import BlogForm from './components/blogForm'
@@ -24,6 +32,7 @@ const App = () => {
 	const blogFormRef = useRef()
 
 	const dispatch = useDispatch()
+	// const navigate = useNavigate()
 	const blogs = useSelector(state => state.blogs)
 	const user = useSelector(state => state.login)
 	const users = useSelector(state => state.users)
@@ -63,6 +72,7 @@ const App = () => {
 		window.localStorage.removeItem('loggedBlogappUser')
 		console.log('user is logged out')
 		dispatch(logoutUser())
+		// navigate('/login')
 	}
 
 	const addBlog = blogObject => {
@@ -125,69 +135,84 @@ const App = () => {
 			})
 	}
 
-	if (user === null) {
-		return (
-			<Router>
-				<Notification />
-				<Routes>
-					<Route path='/' element={<LoginForm />} />
-				</Routes>
-			</Router>
-		)
-	}
+	// if (user === null) {
+	// 	return (
+	// 		<Router>
+	// 			<Notification />
+	// 			<Routes>
+	// 				<Route path='/login' element={<LoginForm />} />
+	// 			</Routes>
+	// 		</Router>
+	// 	)
+	// }
 
 	const padding = {
 		padding: 5,
 	}
 	return (
-		<Router>
-			<div>
-				<Link style={padding} to='/blogs'>
-					blogs
-				</Link>
-				<Link style={padding} to='/users'>
-					users
-				</Link>
-				{user ? (
-					<em>
-						{user.name} logged in
-						<button onClick={handleLogout}>logout</button>
-					</em>
-				) : (
-					<Link style={padding} to='/login'>
-						login
+		<div className='container'>
+			<Router>
+				<div>
+					<Link style={padding} to='/'>
+						home
 					</Link>
-				)}
-			</div>
+					<Link style={padding} to='/blogs'>
+						blogs
+					</Link>
+					<Link style={padding} to='/users'>
+						users
+					</Link>
+					{user ? (
+						<em>
+							{user.name} logged in
+							<button onClick={handleLogout}>logout</button>
+						</em>
+					) : (
+						<Link style={padding} to='/login'>
+							login
+						</Link>
+					)}
+				</div>
 
-			<h2>blogs</h2>
+				{/* <h2>blogs</h2> */}
 
-			<Notification />
+				<Notification />
 
-			<Togglable ref={blogFormRef}>
-				<BlogForm createBlog={addBlog} />
-			</Togglable>
+				<Togglable ref={blogFormRef}>
+					<BlogForm createBlog={addBlog} />
+				</Togglable>
 
-			<Routes>
-				<Route path='/users/:id' element={<User users={users} />} />
-				<Route path='/users' element={<Users users={users} />} />
-				<Route
-					path='/blogs/:id'
-					element={
-						<Blog
-							blogs={blogs}
-							user={user}
-							updateBlog={updateBlog}
-							deleteBlog={deleteBlog}
-							addComment={addComment}
-						/>
-					}
-				/>
-				<Route path='/blogs' element={<Blogs blogs={blogs} />} />
-				<Route path='/login' element={<LoginForm />}></Route>
-				<Route path='/' element={<Blogs blogs={blogs} />} />
-			</Routes>
-		</Router>
+				<Routes>
+					<Route path='/users/:id' element={<User users={users} />} />
+					<Route
+						path='/users'
+						element={
+							user ? <Users users={users} /> : <Navigate replace to='/login' />
+						}
+					/>
+					<Route
+						path='/blogs/:id'
+						element={
+							<Blog
+								blogs={blogs}
+								user={user}
+								updateBlog={updateBlog}
+								deleteBlog={deleteBlog}
+								addComment={addComment}
+							/>
+						}
+					/>
+					<Route
+						path='/blogs'
+						element={
+							user ? <Blogs blogs={blogs} /> : <Navigate replace to='/login' />
+						}
+					/>
+					<Route path='/login' element={<LoginForm />}></Route>
+					<Route path='/' element={<Home />} />
+				</Routes>
+			</Router>
+		</div>
 	)
 }
 

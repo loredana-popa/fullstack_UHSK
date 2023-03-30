@@ -4,15 +4,24 @@ const Users = ({ users }) => {
 	return (
 		<div>
 			<h1>Users</h1>
-			<ul>
-				{users.map(user => (
-					<li key={user.id}>
-						<Link to={`/users/${user.id}`}>
-							{user.name} {user.blogs.length}
-						</Link>
-					</li>
-				))}
-			</ul>
+			<table>
+				<thead>
+					<tr>
+						<td></td>
+						<td>blogs created</td>
+					</tr>
+				</thead>
+				<tbody>
+					{users.map(user => (
+						<tr key={user.id}>
+							<td>
+								<Link to={`/users/${user.id}`}>{user.name}</Link>
+							</td>
+							<td>{user.blogs.length}</td>
+						</tr>
+					))}
+				</tbody>
+			</table>
 		</div>
 	)
 }

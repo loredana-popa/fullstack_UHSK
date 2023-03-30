@@ -1,6 +1,8 @@
 // import PropTypes from 'prop-types'
 import { useState } from 'react'
 import { useDispatch } from 'react-redux'
+import { useNavigate } from 'react-router-dom'
+import { Form, FormGroup, Button } from 'react-bootstrap'
 
 import loginServices from '../services/login'
 import { loginUser } from '../reducers/logginReducer'
@@ -11,6 +13,7 @@ import {
 import blogService from '../services/blogs'
 
 const LoginForm = () => {
+	const navigate = useNavigate()
 	const dispatch = useDispatch()
 
 	const [username, setUsername] = useState('')
@@ -32,6 +35,7 @@ const LoginForm = () => {
 			//clear all input values in the form
 			setUsername('')
 			setPassword('')
+			navigate('/')
 		} catch (exception) {
 			dispatch(showNotification('ERR_Wrong credentials')),
 				setTimeout(() => {
@@ -46,33 +50,27 @@ const LoginForm = () => {
 		<div>
 			<h2>Log in to application</h2>
 
-			<form onSubmit={handleLogin}>
-				<div>
-					username
-					<input
-						id='username'
+			<Form onSubmit={handleLogin}>
+				<FormGroup>
+					<Form.Label>username</Form.Label>
+					<Form.Control
 						type='text'
-						value={username}
 						name='Username'
 						onChange={({ target }) => setUsername(target.value)}
 					/>
-				</div>
 
-				<div>
-					password
-					<input
-						id='password'
+					<Form.Label>password</Form.Label>
+					<Form.Control
 						type='password'
-						value={password}
 						name='Password'
 						onChange={({ target }) => setPassword(target.value)}
 					/>
-				</div>
 
-				<button id='login-button' type='submit'>
-					login
-				</button>
-			</form>
+					<Button variant='primary' type='submit'>
+						login
+					</Button>
+				</FormGroup>
+			</Form>
 		</div>
 	)
 }
