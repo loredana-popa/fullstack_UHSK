@@ -6,6 +6,7 @@ import {
 	// useNavigate,
 	Navigate,
 } from 'react-router-dom'
+import { Navbar, Nav } from 'react-bootstrap'
 import { useEffect, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import {
@@ -152,29 +153,40 @@ const App = () => {
 	return (
 		<div className='container'>
 			<Router>
-				<div>
-					<Link style={padding} to='/'>
-						home
-					</Link>
-					<Link style={padding} to='/blogs'>
-						blogs
-					</Link>
-					<Link style={padding} to='/users'>
-						users
-					</Link>
-					{user ? (
-						<em>
-							{user.name} logged in
-							<button onClick={handleLogout}>logout</button>
-						</em>
-					) : (
-						<Link style={padding} to='/login'>
-							login
-						</Link>
-					)}
-				</div>
-
-				{/* <h2>blogs</h2> */}
+				<Navbar collapseOnSelect expand='lg' bg='dark' variant='dark'>
+					<Navbar.Toggle aria-controls='responsive-navbar-nav' />
+					<Navbar.Collapse id='responsive-navbar-nav'>
+						<Nav className='me-auto'>
+							<Nav.Link href='#' as='span'>
+								<Link style={padding} to='/'>
+									home
+								</Link>
+							</Nav.Link>
+							<Nav.Link href='#' as='span'>
+								<Link style={padding} to='/blogs'>
+									blogs
+								</Link>
+							</Nav.Link>
+							<Nav.Link href='#' as='span'>
+								<Link style={padding} to='/users'>
+									users
+								</Link>
+							</Nav.Link>
+							<Nav.Link href='#' as='span'>
+								{user ? (
+									<em style={padding}>
+										{user.name} logged in
+										<button onClick={handleLogout}>logout</button>
+									</em>
+								) : (
+									<Link style={padding} to='/login'>
+										login
+									</Link>
+								)}
+							</Nav.Link>
+						</Nav>
+					</Navbar.Collapse>
+				</Navbar>
 
 				<Notification />
 
