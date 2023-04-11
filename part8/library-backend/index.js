@@ -2,6 +2,25 @@ const { ApolloServer } = require('@apollo/server')
 const { startStandaloneServer } = require('@apollo/server/standalone')
 const { v1: uuid } = require('uuid')
 
+const mongoose = require('mongoose')
+const Book = require('./models/book')
+const Author = require('./models/author')
+
+require('dotenv').config()
+
+const MONGODB_URI = process.env.MONGODB_URI
+
+console.log('connecting to', MONGODB_URI)
+
+mongoose
+	.connect(MONGODB_URI)
+	.then(() => {
+		console.log('connected to MongoDB')
+	})
+	.catch(error => {
+		console.log('error connection to MongoDB', error.message)
+	})
+
 let authors = [
 	{
 		name: 'Robert Martin',
@@ -27,12 +46,6 @@ let authors = [
 		id: 'afa5b6f3-344d-11e9-a414-719c6709cf3e',
 	},
 ]
-
-/*
- * English:
- * It might make more sense to associate a book with its author by storing the author's id in the context of the book instead of the author's name
- * However, for simplicity, we will store the author's name in connection with the book
- */
 
 let books = [
 	{
@@ -104,7 +117,7 @@ const typeDefs = `
   type Query {
     bookCount: Int!
     authorCount: Int!
-    allBooks(author: String!, genre: String!): [Book!]!
+    allBooks: [Book!]!
     allAuthors : [Author!]!
   }
 
@@ -113,36 +126,58 @@ const typeDefs = `
       title: String!
       author: String!
       published: Int!
-      genres:[String!]!
+      genres: [String!]!
     ): Book
-    editAuthor(name:String!, setBornTo: Int!): Author
+    editAuthor(name: String!, setBornTo: Int!): Author
   }
 `
 
 const resolvers = {
 	Query: {
-		bookCount: () => books.length,
-		authorCount: () => authors.length,
-		allBooks: (root, args) =>
-			books.filter(
-				b => b.author === args.author && b.genres.includes(args.genre)
-			),
-		allAuthors: () => authors,
+		bookCount: async () => Book.collection.countDocuments(),
+		authorCount: async () => Author.collection.countDocuments(),
+
+		// allBooks: (root, args) =>
+		// 	books.filter(
+		// 		b => b.author === args.author && b.genres.includes(args.genre)
+		// 	),
+
+		allBooks: async (root, args) => {
+			return Book.find({})
+		},
+		allAuthors: async (root, args) => {
+			return Author.find({})
+		},
 	},
 	Author: {
 		bookCount: root => books.filter(book => book.author === root.name).length,
 	},
 	Mutation: {
-		addBook: (root, args) => {
-			const book = { ...args, id: uuid }
-			const author = authors.find(a => a.name === args.author)
-			if (!author) {
-				authors = authors.concat({ name: args.author, id: uuid() })
+		addBook: async (root, args) => {
+			const author = new Author({
+				name: args.author,
+			})
+			const book = new Book({ ...args })
+			try {
+				await author.save()
+				await book.save()
+			} catch (error) {
+				throw new GraphQLError('Saving book failed', {
+					extensions: {
+						code: 'BAD_USER_INPUT',
+						invalidArgs: args.name,
+						error,
+					},
+				})
 			}
-			books = books.concat(book)
-			return book
+			return book.save()
+			// if (!author) {
+			// 	authors = authors.concat({ name: args.author, id: uuid() })
+			// }
+			// books = books.concat(book)
+			// return book
 		},
-		editAuthor: (root, args) => {
+		editAuthor: async (root, args) => {
 			const author = authors.find(a => a.name === args.name)
 			if (!author) {
 				return null
