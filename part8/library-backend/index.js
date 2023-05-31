@@ -1,4 +1,5 @@
 const { ApolloServer } = require('@apollo/server')
+const { GraphQLError } = require('@apollo/server')
 const { startStandaloneServer } = require('@apollo/server/standalone')
 const { v1: uuid } = require('uuid')
 
@@ -98,7 +99,7 @@ let books = [
 		genres: ['classic', 'revolution'],
 	},
 ]
-
+console.log('step 0')
 const typeDefs = `
   type Author {
     name: String!
@@ -106,12 +107,14 @@ const typeDefs = `
     born: Int
     bookCount: Int!
   }
+
   type Book {
     title: String!
-    published: Int!
     author: String!
-    id: ID!
+    published: Int!
     genres: [String!]!
+    id: ID!
+    
   }
 
   type Query {
@@ -126,41 +129,57 @@ const typeDefs = `
       title: String!
       author: String!
       published: Int!
-      genres: [String!]!
+      genres: [String!]
     ): Book
-    editAuthor(name: String!, setBornTo: Int!): Author
+
+    editAuthor(
+      name: String!
+      setBornTo: Int!): Author
   }
 `
 
 const resolvers = {
 	Query: {
 		bookCount: async () => Book.collection.countDocuments(),
+
 		authorCount: async () => Author.collection.countDocuments(),
 
-		// allBooks: (root, args) =>
-		// 	books.filter(
-		// 		b => b.author === args.author && b.genres.includes(args.genre)
-		// 	),
-
 		allBooks: async (root, args) => {
-			return Book.find({})
+			console.log('all books')
+			return await Book.find({})
 		},
+
 		allAuthors: async (root, args) => {
-			return Author.find({})
+			console.log('all authors')
+			return await Author.find({})
 		},
 	},
+
 	Author: {
 		bookCount: root => books.filter(book => book.author === root.name).length,
 	},
+
 	Mutation: {
 		addBook: async (root, args) => {
-			const author = new Author({
+			console.log('step1')
+			console.log('args are', args)
+
+			const createdAuthor = new Author({
 				name: args.author,
+				born: null,
 			})
-			const book = new Book({ ...args })
+
+			const createdBook = new Book({ ...args })
+
+			const isAuthor = await Author.findOne({ name: args.author })
+			console.log('is author', isAuthor)
+			if (!isAuthor) {
+				await createdAuthor.save()
+			}
+
 			try {
-				await author.save()
-				await book.save()
+				await createdBook.save()
+				console.log('new book', createdBook)
 			} catch (error) {
 				throw new GraphQLError('Saving book failed', {
 					extensions: {
@@ -170,20 +189,39 @@ const resolvers = {
 					},
 				})
 			}
-			return book.save()
-			// if (!author) {
-			// 	authors = authors.concat({ name: args.author, id: uuid() })
-			// }
-			// books = books.concat(book)
-			// return book
+			const res = await createdBook.save()
+			return res
 		},
+
+		// Change the year of birth for a given author
 		editAuthor: async (root, args) => {
-			const author = authors.find(a => a.name === args.name)
+			console.log('args given', args)
+
+			const author = await Author.findOne({ name: args.name })
+			console.log(' author to be changed', author)
+
 			if (!author) {
 				return null
 			}
-			author['born'] = args.setBornTo
-			return author
+
+			try {
+				await Author.updateOne(
+					{ _id: author._id },
+					{ $set: { born: args.setBornTo } }
+				)
+			} catch (error) {
+				throw new GraphQLError('Updating author failed', {
+					extensions: {
+						code: 'BAD_USER_INPUT',
+						invalidArgs: args.name,
+						error,
+					},
+				})
+			}
+
+			const res = await Author.findOne({ name: args.name })
+			console.log('updated author', res)
+			return res
 		},
 	},
 }

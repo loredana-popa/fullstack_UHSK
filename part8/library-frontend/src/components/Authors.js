@@ -1,14 +1,8 @@
-import { gql, useQuery } from '@apollo/client'
+import { useQuery } from '@apollo/client'
+import EditAuthorForm from './EditAuthor'
 
-const ALL_AUTHORS = gql`
-	query {
-		allAuthors {
-			name
-			born
-			bookCount
-		}
-	}
-`
+import { ALL_AUTHORS } from './queries'
+
 const Authors = props => {
 	const { loading, error, data } = useQuery(ALL_AUTHORS)
 	const authors = !data ? [] : data.allAuthors
@@ -44,6 +38,7 @@ const Authors = props => {
 					))}
 				</tbody>
 			</table>
+			<EditAuthorForm />
 		</div>
 	)
 }
