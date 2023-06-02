@@ -140,15 +140,19 @@ const typeDefs = `
 
 const resolvers = {
 	Query: {
+		// the total number of books saved in DB
 		bookCount: async () => Book.collection.countDocuments(),
 
+		// the total number of authors saved in DB
 		authorCount: async () => Author.collection.countDocuments(),
 
+		// get all the books from DB
 		allBooks: async (root, args) => {
 			console.log('all books')
 			return await Book.find({})
 		},
 
+		// get all the authors from DB
 		allAuthors: async (root, args) => {
 			console.log('all authors')
 			return await Author.find({})
@@ -156,10 +160,13 @@ const resolvers = {
 	},
 
 	Author: {
-		bookCount: root => books.filter(book => book.author === root.name).length,
+		// get the number of books of each author
+		bookCount: async root =>
+			books.filter(book => book.author === root.name).length,
 	},
 
 	Mutation: {
+		// create and add a new book to the DB
 		addBook: async (root, args) => {
 			console.log('step1')
 			console.log('args are', args)

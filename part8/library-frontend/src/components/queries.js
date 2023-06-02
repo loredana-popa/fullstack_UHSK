@@ -9,6 +9,15 @@ export const ALL_AUTHORS = gql`
 		}
 	}
 `
+export const ALL_BOOKS = gql`
+	query {
+		allBooks {
+			title
+			author
+			published
+		}
+	}
+`
 
 export const CREATE_BOOK = gql`
 	mutation createBook(
