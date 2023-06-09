@@ -1,19 +1,11 @@
 import { useMutation } from '@apollo/client'
 import { useState } from 'react'
-import Select from 'react-select'
 
 import { EDIT_AUTHOR, ALL_AUTHORS } from './queries'
 
 const EditAuthorForm = props => {
 	const [name, setName] = useState('')
 	const [setBornTo, setSetBornTo] = useState('')
-
-	// const [selectedOption, setSelectedOption] = useState(null)
-
-	// const options = props.authors.map(a => ({
-	// 	value: a.name,
-	// 	label: a.name,
-	// }))
 
 	const [editAuthor] = useMutation(EDIT_AUTHOR, {
 		refetchQueries: [{ query: ALL_AUTHORS }],
