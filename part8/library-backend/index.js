@@ -113,7 +113,7 @@ const typeDefs = `
 
   type Book {
     title: String!
-    author: String!
+    author: Author!
     published: Int!
     genres: [String!]!
     id: ID!
@@ -198,18 +198,27 @@ const resolvers = {
 		addBook: async (root, args, context) => {
 			console.log('addBook mutation is initiated')
 
+			const isAuthor = await Author.findOne({ name: args.author })
+			console.log('author found in DB is', isAuthor)
+
 			const createdAuthor = new Author({
 				name: args.author,
 				born: null,
 			})
 
-			const book = await Book.findOne({ ...args })
-			const createdBook = new Book({ ...args })
+			const authorID = isAuthor ? isAuthor._id : createdAuthor._id
+			console.log('author ID is', authorID)
 
-			const isAuthor = await Author.findOne({ name: args.author })
+			const isBook = await Book.findOne({ name: args.title })
+			const createdBook = new Book({
+				title: args.title,
+				author: authorID,
+				published: args.published,
+				genres: args.genres,
+			})
 
 			const currentUser = context.currentUser
-			console.log('logged in user is', currentUser)
+			// console.log('logged in user is', currentUser)
 
 			if (!currentUser) {
 				throw new GraphQLError('not authenticated', {
@@ -223,7 +232,7 @@ const resolvers = {
 				await createdAuthor.save()
 			}
 
-			if (book) {
+			if (isBook) {
 				return null
 			}
 
@@ -239,7 +248,9 @@ const resolvers = {
 					},
 				})
 			}
-			const res = await createdBook.save()
+			// const res = await createdBook.save()
+			const res = await Book.findOne({ title: args.title }).populate('author')
+			console.log('returned book is', res)
 			return res
 		},
 
@@ -300,7 +311,7 @@ const resolvers = {
 			})
 		},
 
-		// checks if the username/password pair is valid, if it is it returs a jwt token
+		// checks if the username-password pair is valid, if it is it returs a jwt token
 		login: async (root, args) => {
 			const user = await User.findOne({ username: args.username })
 
