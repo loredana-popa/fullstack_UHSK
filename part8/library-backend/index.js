@@ -172,7 +172,7 @@ const resolvers = {
 		// get all the books from DB
 		allBooks: async (root, args) => {
 			console.log('all books')
-			return await Book.find({})
+			return await Book.find({}).populate('author')
 		},
 
 		// get all the authors from DB
