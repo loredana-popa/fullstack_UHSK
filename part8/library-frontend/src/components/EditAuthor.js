@@ -14,11 +14,10 @@ const EditAuthorForm = props => {
 	const submit = async event => {
 		event.preventDefault()
 
-		console.log('author edited...')
+		console.log('edit author...')
 		editAuthor({ variables: { name, setBornTo } })
 		setSetBornTo('')
 	}
-	console.log('name is', name)
 
 	return (
 		<div>
