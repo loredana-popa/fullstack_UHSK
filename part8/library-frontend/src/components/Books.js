@@ -1,20 +1,29 @@
-import { useQuery } from '@apollo/client'
+import { useQuery, useLazyQuery } from '@apollo/client'
 import { useState } from 'react'
-import { ALL_BOOKS } from './queries'
+import { ALL_BOOKS, BOOKS_BY_GENRE } from './queries'
 
 import FilterButtons from './FilterButtons'
+import BooksByGenre from './BooksByGenre'
 
 const Books = props => {
-	const { loading, error, data } = useQuery(ALL_BOOKS)
-	const books = !data ? [] : data.allBooks
-
-	const [filteredBooksArr, setFilteredBooksArr] = useState([])
+	const [genre, setGenre] = useState('')
 	const [filterVal, setFilterVal] = useState(null)
 
-	const resultArr = !filterVal ? [...books] : [...filteredBooksArr]
+	const { loading, error, data } = useQuery(ALL_BOOKS)
+	const allBooks = !data ? [] : data.allBooks
 
+	const [
+		filterBooksByGen,
+		{ loading: genBookload, data: genBookdata, error: genBookerr },
+	] = useLazyQuery(BOOKS_BY_GENRE)
+
+	const booksByGen = !genBookdata ? [] : genBookdata.findBooksByGenre
+
+	// get the array of unique genres from DB
 	const genres = () => {
-		const genresArr = !books ? [] : [...new Set(books.map(Val => Val.genres))]
+		const genresArr = !allBooks
+			? []
+			: [...new Set(allBooks.map(Val => Val.genres))]
 		const mergeDedupe = arr => {
 			return [...new Set([].concat(...arr))]
 		}
@@ -22,13 +31,15 @@ const Books = props => {
 	}
 
 	const filterBooks = genre => {
-		const arr = books.filter(book => book.genres.includes(`${genre}`))
-		setFilteredBooksArr([...arr])
 		setFilterVal(genre)
+		setGenre(genre)
+		filterBooksByGen({ variables: { genre: `${genre}` } })
 	}
 
 	if (loading) return 'Loading...'
 	if (error) return `Error! ${error.message}`
+	if (genBookload) return 'Loading...'
+	if (genBookerr) return `Error! ${error.message}`
 
 	if (!props.show) {
 		return null
@@ -41,22 +52,11 @@ const Books = props => {
 				in genre: <b>{filterVal}</b>
 			</p>
 
-			<table>
-				<tbody>
-					<tr>
-						<th></th>
-						<th>author</th>
-						<th>published</th>
-					</tr>
-					{resultArr.map(b => (
-						<tr key={b.title}>
-							<td>{b.title}</td>
-							<td>{b.author.name}</td>
-							<td>{b.published}</td>
-						</tr>
-					))}
-				</tbody>
-			</table>
+			<BooksByGenre
+				filter={genre}
+				allBooks={allBooks}
+				booksByGen={booksByGen}
+			/>
 
 			<FilterButtons filterBooks={filterBooks} genres={genres()} />
 		</div>

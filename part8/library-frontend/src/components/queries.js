@@ -31,6 +31,32 @@ export const ME = gql`
 	}
 `
 
+export const BOOKS_BY_GENRE = gql`
+	query booksByGenre($genre: String) {
+		findBooksByGenre(genre: $genre) {
+			title
+			author {
+				name
+			}
+			published
+			genres
+		}
+	}
+`
+
+export const RECOM_BOOKS = gql`
+	query recomBooks($favgenre: String) {
+		findBooksByGenre(genre: $favgenre) {
+			title
+			author {
+				name
+			}
+			published
+			genres
+		}
+	}
+`
+
 export const CREATE_BOOK = gql`
 	mutation createBook(
 		$title: String!
