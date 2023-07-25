@@ -34,7 +34,7 @@ const typeDefs = `
     findBooksByGenre(genre:String): [Book!]
   }
 
-  type Mutation{
+  type Mutation {
     addBook(
       title: String!
       author: String!
@@ -55,6 +55,10 @@ const typeDefs = `
       username: String!
       password: String!
     ): Token
+  }
+
+  type Subscription {
+    bookAdded: Book!
   }
 `
 module.exports = typeDefs
