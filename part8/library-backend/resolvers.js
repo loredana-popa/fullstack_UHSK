@@ -25,11 +25,12 @@ const resolvers = {
 		// get all the authors from DB
 		allAuthors: async (root, args) => {
 			console.log('all authors')
-			return await Author.find({})
+			return await Author.find({}).populate('books')
 		},
 
 		// return the logged-in user
 		me: (root, args, context) => {
+			console.log('logged user')
 			return context.currentUser
 		},
 
@@ -43,8 +44,8 @@ const resolvers = {
 	Author: {
 		// get the number of books of each author
 		bookCount: async root => {
-			const books = await Book.find({}).populate('author')
-			const count = books.filter(book => book.author.name === root.name).length
+			console.log('count books per author')
+			const count = root.books.length
 			return count
 		},
 	},
@@ -60,6 +61,7 @@ const resolvers = {
 			const createdAuthor = new Author({
 				name: args.author,
 				born: null,
+				books: [],
 			})
 
 			const authorID = isAuthor ? isAuthor._id : createdAuthor._id
@@ -95,6 +97,10 @@ const resolvers = {
 			try {
 				await createdBook.save()
 				console.log('new book', createdBook)
+				await Author.updateOne(
+					{ _id: authorID },
+					{ $push: { books: createdBook._id } }
+				)
 			} catch (error) {
 				throw new GraphQLError('Saving book failed', {
 					extensions: {
