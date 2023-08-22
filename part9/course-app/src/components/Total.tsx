@@ -11,9 +11,9 @@ const Total =(props: TotalProps)=> {
   })
 
   return (
-  <div>
+  <h3>
     Number of exercises :{sum}
-  </div>
+  </h3>
   )
 }
 
