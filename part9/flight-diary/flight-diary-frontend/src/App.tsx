@@ -1,6 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 
-function App() {
+
+const App=()=> {
+  const [diaries, setDiaries]= useState([])
+
   return (
     <div className="App">
     </div>
