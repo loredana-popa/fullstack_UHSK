@@ -29,7 +29,7 @@ const isString = (text: unknown): text is string => {
 };
 
 const parseComment = (comment: unknown): string => {
-	if (!comment || !isString(comment)) {
+	if (!isString(comment)) {
 		throw new Error('Incorect or missing comment');
 	}
 
