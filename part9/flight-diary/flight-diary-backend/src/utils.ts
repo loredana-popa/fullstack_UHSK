@@ -41,7 +41,7 @@ const isDate = (date: string): boolean => {
 };
 
 const parseDate = (date: unknown): string => {
-	if (!isString(date) || isDate(date)) {
+	if (!isString(date) || !isDate(date)) {
 		throw new Error('Incorrect or missing date: ' + date);
 	}
 	return date;

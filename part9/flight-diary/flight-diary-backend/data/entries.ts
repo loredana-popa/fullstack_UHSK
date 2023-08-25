@@ -30,6 +30,13 @@ const data = [
 		visibility: 'good',
 		comment: 'I almost failed the landing but I survived',
 	},
+	{
+		id: 5,
+		date: '2017-01-01',
+		weather: 'rainy',
+		visibility: 'poor',
+		comment: "Pretty scary flight, I'm glad I'm alive",
+	},
 ];
 
 const diaryEntries: DiaryEntry[] = data.map((obj) => {

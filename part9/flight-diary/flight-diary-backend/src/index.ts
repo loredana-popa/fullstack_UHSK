@@ -1,17 +1,28 @@
 import express from 'express';
+import cors from 'cors';
+
 import diaryRouter from './routes/diaries';
+
 const app = express();
+
+const allowedOrigins = ['http://localhost:3000'];
+
+const options: cors.CorsOptions = {
+	origin: allowedOrigins,
+};
+
+app.use(cors(options));
 app.use(express.json());
 
-const PORT = 3000;
+const PORT = 3009;
 
 app.get('/ping', (_req, res) => {
-	console.log('someone pinged here');
+	console.log('someone pinged here  Lore');
 	res.send('pong');
 });
 
 app.use('/api/diaries', diaryRouter);
 
 app.listen(PORT, () => {
-	console.log(`Server running on port ${PORT}`);
+	console.log(`Dev Server running on port ${PORT}`);
 });
