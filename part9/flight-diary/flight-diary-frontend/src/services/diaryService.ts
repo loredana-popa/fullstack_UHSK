@@ -8,8 +8,36 @@ export const getAllDiaries = async () => {
 	return data;
 };
 
-export const addNewDiary = async (newObject: NewDiaryEntry) => {
-	const response = await axios.post(baseUrl, newObject);
-	console.log('a new diary was added to frontend: ', response.data);
-	return response.data;
+interface ValidationError {
+	message: string;
+	errors: Record<string, string[]>;
+}
+// export const addNewDiary = async (newObject: NewDiaryEntry) => {
+// 	try {
+// 		const response = await axios.post<NonSensitiveDiaryEntry>(
+// 			baseUrl,
+// 			newObject
+// 		);
+// 		return response.data;
+// 	} catch (error: unknown) {
+// 		if (axios.isAxiosError<ValidationError, Record<string, unknown>>(error)) {
+// 			if (typeof error.response?.data === 'string') {
+// 				console.log('err message', error.response.data);
+// 				return error.response.data;
+// 			} else {
+// 				return 'Smth went wrong';
+// 			}
+// 		}
+// 	}
+// };
+
+export const addNewDiary = (newObject: NewDiaryEntry) => {
+	return axios
+		.post(baseUrl, newObject)
+		.then((response) => response.data)
+		.catch((err) => {
+			console.log('Oops!!', err.response.data);
+			const message = err.response.data;
+			return message;
+		});
 };
