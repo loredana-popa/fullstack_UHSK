@@ -17,7 +17,8 @@ const PatientInfo=(props: PatientInfoProps)=>{
         <div>gender: {patient.gender}</div>
         <div>date of birth: {patient.dateOfBirth}</div>
         <div>ssn:{patient.ssn}</div>
-        <div>occupation: {patient.occupation}</div>      
+        <div>occupation: {patient.occupation}</div> 
+             
       </div>
     :
       <div> There are no info about this patient </div>
