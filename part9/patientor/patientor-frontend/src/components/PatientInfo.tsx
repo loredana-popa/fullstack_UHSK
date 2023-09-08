@@ -1,53 +1,54 @@
- import { useParams } from "react-router-dom"
- import axios from "axios"
- import patientService from '../services/patients'
- import { apiBaseUrl } from "../constants"
-import { Patient } from "../types"
+import axios from "axios";
+import { useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
 
-import PatientEntryInfo from "./PatientEntryInfo"
-import { useEffect, useState } from "react"
- 
-type PatientParams ={
-  id: string
-}
-const PatientInfo=()=>{
-  const [patient, setPatient] = useState<Patient>()
-  const {id}= useParams<PatientParams>()
+import patientService from "../services/patients"
 
-  useEffect(()=>{
+import { apiBaseUrl } from "../constants";
+import { Patient } from "../types";
+
+import PatientEntryInfo from "./PatientEntryInfo";
+
+type PatientParams = {
+  id: string;
+};
+
+const PatientInfo = () => {
+  const [patient, setPatient] = useState<Patient>();
+
+  const { id } = useParams<PatientParams>();
+
+  useEffect(() => {
     void axios.get<void>(`${apiBaseUrl}/patients`);
-    
-    if (id){
+
+    if (id) {
       const fetchPatient = async () => {
-        const  patient = await patientService.getOne(id);
+        const patient = await patientService.getOne(id);
         setPatient(patient);
-      }
+      };
 
-    void fetchPatient()
-  }
-  },[id])
+      void fetchPatient();
+    }
+  }, [id]);
 
+  return patient ? (
+    <div>
+      <h2>{patient.name}</h2>
 
-  return(
-    patient ?
-    
-      <div>
-        <h2>{patient.name}</h2>
+      <div>gender: {patient.gender}</div>
+      <div>date of birth: {patient.dateOfBirth}</div>
+      <div>ssn: {patient.ssn}</div>
+      <div>occupation: {patient.occupation}</div>
 
-        <div>gender: {patient.gender}</div>
-        <div>date of birth: {patient.dateOfBirth}</div>
-        <div>ssn: {patient.ssn}</div>
-        <div>occupation: {patient.occupation}</div> 
+      <br></br>
 
-        <br></br>
+      <h2>entries</h2>
 
-        <h2>entries</h2>
+      <PatientEntryInfo entries={patient.entries}></PatientEntryInfo>
+    </div>
+  ) : (
+    <div> There are no info about this patient </div>
+  );
+};
 
-        <PatientEntryInfo entries={patient.entries}></PatientEntryInfo>
-      </div>
-    :
-      <div> There are no info about this patient </div>
-  )
-}
-
-export default PatientInfo
+export default PatientInfo;
