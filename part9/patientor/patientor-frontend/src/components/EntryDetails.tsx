@@ -84,31 +84,12 @@ const EntryDetails = (props:EntryDetailsProps) =>{
   const entry= props.entry
   switch(entry.type){
     case 'Hospital':
-      return <HospitalEntryDetails 
-      date={entry.date}
-      description={entry.description}
-      specialist={entry.specialist}
-      diagnosisCodes={entry.diagnosisCodes}
-      discharge={entry.discharge}
-      />;
+      return <HospitalEntryDetails {...entry} />;
     case 'OccupationalHealthcare':
-      return <OccupationalHealthcareEntryDetails
-        date={entry.date}
-        description={entry.description}
-        specialist={entry.specialist}
-        diagnosisCodes={entry.diagnosisCodes}
-        employerName={entry.employerName}
-        sickLeave={entry.sickLeave}
-        />;
+      return <OccupationalHealthcareEntryDetails {...entry}/>;
 
     case 'HealthCheck':
-      return <HealthCheckEntryDetails
-      date={entry.date}
-      description={entry.description}
-      specialist={entry.specialist}
-      diagnosisCodes={entry.diagnosisCodes}
-      healthCheckRating={entry.healthCheckRating}
-      />    
+      return <HealthCheckEntryDetails {...entry}/>    
     default:
       return assertNever(entry)
   }
