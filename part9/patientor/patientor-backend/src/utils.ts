@@ -93,7 +93,6 @@ export const toNewEntryToPatient = (object: unknown): EntryWithoutId => {
 		'date' in object &&
 		'description' in object &&
 		'specialist' in object &&
-		// 'diagnosisCodes' in object &&
 		'type' in object
 	) {
 		switch (object.type) {
@@ -245,7 +244,7 @@ const isHealthCheckRating = (param: number): param is HealthCheckRating => {
 
 const parseHealthCheckRating = (rating: unknown): HealthCheckRating => {
 	if (!isNumber(rating) || !isHealthCheckRating(rating)) {
-		throw new Error('Incorrect or missing type: ' + rating);
+		throw new Error('Incorrect or missing type healthCheckRating: ' + rating);
 	}
 	return rating;
 };

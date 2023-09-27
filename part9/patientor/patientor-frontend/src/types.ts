@@ -17,12 +17,17 @@ interface BaseEntry {
 	specialist: string;
 	diagnosisCodes?: Array<Diagnosis['code']>;
 }
+export enum EntryType {
+	HealthCheck = 'HealthCheck',
+	Hospital = 'Hospital',
+	OccupationalHealthcare = 'OccupationalHealthcare',
+}
 
 export enum healthCheckRating {
-	'Healthy' = 0,
-	'LowRisk' = 1,
-	'HighRisk' = 2,
-	'CriticalRisk' = 3,
+	Healthy = 0,
+	LowRisk = 1,
+	HighRisk = 2,
+	CriticalRisk = 3,
 }
 
 export interface HealthCheckEntry extends BaseEntry {
@@ -30,12 +35,13 @@ export interface HealthCheckEntry extends BaseEntry {
 	healthCheckRating: healthCheckRating;
 }
 
+interface Discharge {
+	date: string;
+	criteria: string;
+}
 export interface HospitalEntry extends BaseEntry {
 	type: 'Hospital';
-	discharge: {
-		date: string;
-		criteria: string;
-	};
+	discharge: Discharge;
 }
 
 export interface sickLeave {
@@ -46,10 +52,17 @@ export interface sickLeave {
 export interface OcupationalHealthcare extends BaseEntry {
 	type: 'OccupationalHealthcare';
 	employerName: string;
-	sickLeave?: sickLeave;
+	sickLeave: sickLeave;
 }
 
-export type Entry = HealthCheckEntry | HospitalEntry | OcupationalHealthcare;
+export type Entry = HospitalEntry | HealthCheckEntry | OcupationalHealthcare;
+
+// Define special omit for unions
+type UnionOmit<T, K extends string | number | symbol> = T extends unknown
+	? Omit<T, K>
+	: never;
+// Define Entry without the 'id' property
+export type EntryWithoutId = UnionOmit<Entry, 'id'>;
 
 export interface Patient {
 	id: string;

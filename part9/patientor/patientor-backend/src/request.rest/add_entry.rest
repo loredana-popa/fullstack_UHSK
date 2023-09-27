@@ -6,5 +6,10 @@ Content-Type: application/json
   "type": "OccupationalHealthcare",
   "specialist": "dr. Test",
   "description": "test.",
-  "employerName": "Test employer"
+  "employerName": "test employer",
+  "sickLeave":{
+    "startDate": "2019-05-01",
+    "endDate": "2019-05-05"
+  },
+  "diagnosisCodes":[123]
 }

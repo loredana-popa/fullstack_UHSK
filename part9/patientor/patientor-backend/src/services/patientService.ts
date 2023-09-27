@@ -10,6 +10,7 @@ import { v1 as uuid } from 'uuid';
 
 const patients: Patient[] = patientsData;
 const id = uuid();
+console.log('entry id is', id);
 
 const getNonSensitivePatientData = (): NonSensitivePatientData[] => {
 	return patients.map(
